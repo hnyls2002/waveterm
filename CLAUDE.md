@@ -16,3 +16,17 @@ This project uses a set of "skill" guides — focused how-to documents for commo
 | electron-api | `.kilocode/skills/electron-api/SKILL.md` | Guide for adding new Electron APIs to Wave Terminal. Use when implementing new frontend-to-electron communications via preload/IPC.                                                                                                         |
 | waveenv      | `.kilocode/skills/waveenv/SKILL.md`      | Guide for creating WaveEnv narrowings in Wave Terminal. Use when writing a named subset type of WaveEnv for a component tree, documenting environmental dependencies, or enabling mock environments for preview/test server usage.          |
 | wps-events   | `.kilocode/skills/wps-events/SKILL.md`   | Guide for working with Wave Terminal's WPS (Wave PubSub) event system. Use when implementing new event types, publishing events, subscribing to events, or adding asynchronous communication between components.                            |
+
+---
+
+## Fork Workflow (hnyls2002/waveterm)
+
+This fork is the daily-driver repo. `dev` is the default/integration branch; `main` is a pure fast-forward mirror of upstream `wavetermdev/waveterm` (sync via `git fetch upstream main:main`).
+
+- Some changes are meant for upstream, most are not. Default to fork-first development: land work on `dev` without assuming it will be upstreamed.
+- All changes to `dev` go through PRs on this fork (base `dev`) — never commit or merge to `dev` directly.
+- Branch naming encodes the destination:
+  - `lsyin/<topic>` — fork-only work; PR base is this fork's `dev`.
+  - `lsyin-upstream/<topic>` — intended for upstream: cut from `upstream/main`, PR to `wavetermdev/waveterm` `main`. To use the change on `dev` before upstream merges, cut a separate `lsyin/<topic>` branch from the same commit and PR it into `dev`.
+- One branch heads exactly one PR. Auto-delete head branches is enabled on this fork, so merging a fork PR deletes its branch — a branch heading a second PR (e.g. an upstream one) would get that PR auto-closed on merge of the first.
+- `lsyin-upstream/*` branches are never auto-deleted (their PRs merge at upstream, which cannot delete branches in this fork) — delete them manually once the upstream PR is merged or closed.
