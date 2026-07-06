@@ -50,6 +50,13 @@
             "left"
           ]
         },
+        "app:theme": {
+          "type": "string",
+          "enum": [
+            "dark",
+            "light"
+          ]
+        },
         "feature:waveappbuilder": {
           "type": "boolean"
         },

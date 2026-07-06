@@ -33,6 +33,7 @@ import * as WOS from "@/store/wos";
 import { loadFonts } from "@/util/fontutil";
 import { setKeyUtilPlatform } from "@/util/keyutil";
 import { isMacOS, setMacOSVersion } from "@/util/platformutil";
+import { setDocumentTheme } from "@/util/waveutil";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -194,6 +195,7 @@ async function initWave(initOpts: WaveInitOpts) {
     const fullConfig = await RpcApi.GetFullConfigCommand(TabRpcClient);
     console.log("fullconfig", fullConfig);
     globalStore.set(atoms.fullConfigAtom, fullConfig);
+    setDocumentTheme(fullConfig?.settings?.["app:theme"]);
     const waveaiModeConfig = await RpcApi.GetWaveAIModeConfigCommand(TabRpcClient);
     globalStore.set(atoms.waveaiModeConfigAtom, waveaiModeConfig.configs);
     console.log("Wave First Render");
@@ -265,6 +267,7 @@ async function initBuilder(initOpts: BuilderInitOpts) {
     const fullConfig = await RpcApi.GetFullConfigCommand(TabRpcClient);
     console.log("fullconfig", fullConfig);
     globalStore.set(atoms.fullConfigAtom, fullConfig);
+    setDocumentTheme(fullConfig?.settings?.["app:theme"]);
     const waveaiModeConfig = await RpcApi.GetWaveAIModeConfigCommand(TabRpcClient);
     globalStore.set(atoms.waveaiModeConfigAtom, waveaiModeConfig.configs);
 

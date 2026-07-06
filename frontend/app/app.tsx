@@ -17,12 +17,13 @@ import { makeWaveEnvImpl } from "@/app/waveenv/waveenvimpl";
 import { Workspace } from "@/app/workspace/workspace";
 import { getLayoutModelForStaticTab } from "@/layout/index";
 import { ContextMenuModel } from "@/store/contextmenu";
-import { atoms, createBlock, getSettingsPrefixAtom, refocusNode } from "@/store/global";
+import { atoms, createBlock, getSettingsKeyAtom, getSettingsPrefixAtom, refocusNode } from "@/store/global";
 import { appHandleKeyDown, keyboardMouseDownHandler } from "@/store/keymodel";
 import { getElemAsStr } from "@/util/focusutil";
 import * as keyutil from "@/util/keyutil";
 import { PLATFORM } from "@/util/platformutil";
 import * as util from "@/util/util";
+import { setDocumentTheme } from "@/util/waveutil";
 import clsx from "clsx";
 import debug from "debug";
 import { Provider, useAtomValue } from "jotai";
@@ -164,6 +165,14 @@ function AppSettingsUpdater() {
             document.body.style.removeProperty("--main-bg-color");
         }
     }, [windowSettings]);
+    return null;
+}
+
+function AppThemeUpdater() {
+    const appTheme = useAtomValue(getSettingsKeyAtom("app:theme"));
+    useEffect(() => {
+        setDocumentTheme(appTheme);
+    }, [appTheme]);
     return null;
 }
 
@@ -382,6 +391,7 @@ const AppInner = () => {
             <AppKeyHandlers />
             <AppFocusHandler />
             <AppSettingsUpdater />
+            <AppThemeUpdater />
             <BadgeAutoClearing />
             <DndProvider backend={HTML5Backend}>
                 <Workspace />

@@ -5,6 +5,10 @@ import { getWebServerEndpoint } from "@/util/endpoints";
 import { boundNumber, isBlank } from "@/util/util";
 import { generate as generateCSS, parse as parseCSS, walk as walkCSS } from "css-tree";
 
+export function setDocumentTheme(theme: string) {
+    document.documentElement.dataset.theme = theme === "light" ? "light" : "dark";
+}
+
 function encodeFileURL(file: string) {
     const webEndpoint = getWebServerEndpoint();
     const fileUri = formatRemoteUri(file, "local");
