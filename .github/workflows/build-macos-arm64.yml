@@ -3,7 +3,6 @@ run-name: Build ${{ github.ref_name }} (macOS arm64)
 on:
     workflow_dispatch:
 env:
-    GO_VERSION: "1.25.6"
     NODE_VERSION: 22
     NODE_OPTIONS: --max-old-space-size=4096
 jobs:
@@ -13,7 +12,7 @@ jobs:
             - uses: actions/checkout@v6
             - uses: actions/setup-go@v6
               with:
-                  go-version: ${{ env.GO_VERSION }}
+                  go-version-file: go.mod
                   cache-dependency-path: |
                       go.sum
             - uses: actions/setup-node@v6
@@ -25,8 +24,16 @@ jobs:
               run: |
                   git config --global url.https://github.com/.insteadof ssh://git@github.com/
                   git config --global url.https://github.com/.insteadof git@github.com:
-            - name: npm ci
-              run: npm ci --no-audit --no-fund
+            - uses: nick-fields/retry@v4
+              name: npm ci
+              with:
+                  command: npm ci --no-audit --no-fund
+                  retry_on: error
+                  max_attempts: 3
+                  timeout_minutes: 5
+              env:
+                  GIT_ASKPASS: "echo"
+                  GIT_TERMINAL_PROMPT: "0"
             - name: Install Task
               uses: arduino/setup-task@v2
               with:
@@ -38,9 +45,7 @@ jobs:
               uses: actions/upload-artifact@v5
               with:
                   name: waveterm-macos-arm64
-                  path: |
-                      make/*.dmg
-                      make/*.zip
+                  path: make/*.dmg
             - name: Write install instructions
               run: |
                   {
