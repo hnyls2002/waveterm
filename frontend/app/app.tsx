@@ -23,6 +23,7 @@ import { getElemAsStr } from "@/util/focusutil";
 import * as keyutil from "@/util/keyutil";
 import { PLATFORM } from "@/util/platformutil";
 import * as util from "@/util/util";
+import { setDocumentTheme } from "@/util/waveutil";
 import clsx from "clsx";
 import debug from "debug";
 import { Provider, useAtomValue } from "jotai";
@@ -170,7 +171,7 @@ function AppSettingsUpdater() {
 function AppThemeUpdater() {
     const appTheme = useAtomValue(getSettingsKeyAtom("app:theme"));
     useEffect(() => {
-        document.body.dataset.theme = appTheme === "light" ? "light" : "dark";
+        setDocumentTheme(appTheme);
     }, [appTheme]);
     return null;
 }
