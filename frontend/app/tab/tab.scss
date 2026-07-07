@@ -44,7 +44,7 @@
         }
 
         .name {
-            color: rgba(255, 255, 255, 1);
+            color: var(--main-text-color);
             font-weight: 600;
         }
     }

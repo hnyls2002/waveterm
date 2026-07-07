@@ -15,6 +15,10 @@
     background: rgba(0, 0, 0, 0.35);
     flex-shrink: 0;
 
+    :root[data-theme="light"] & {
+        background: rgba(0, 0, 0, 0.04);
+    }
+
     button {
         -webkit-app-region: no-drag;
     }
