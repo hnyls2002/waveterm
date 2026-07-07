@@ -102,11 +102,11 @@ const BuilderBuildPanel = memo(() => {
         : outputLines.filter((line) => !line.startsWith("[debug]") && line.trim().length > 0);
 
     return (
-        <div className="w-full h-full flex flex-col bg-black rounded-br-2">
-            <div className="flex-shrink-0 px-3 py-2 border-b border-gray-700 flex items-center justify-between">
-                <span className="text-sm font-semibold text-gray-300">Build Output</span>
+        <div className="w-full h-full flex flex-col bg-panel rounded-br-2">
+            <div className="flex-shrink-0 px-3 py-2 border-b border-border flex items-center justify-between">
+                <span className="text-sm font-semibold text-secondary">Build Output</span>
                 <div className="flex items-center gap-4">
-                    <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+                    <label className="flex items-center gap-2 text-sm text-secondary cursor-pointer">
                         <input
                             type="checkbox"
                             checked={showDebug}
@@ -132,7 +132,7 @@ const BuilderBuildPanel = memo(() => {
             <div ref={scrollRef} className="flex-1 overflow-y-auto overflow-x-auto p-2">
                 <pre
                     ref={preRef}
-                    className="font-mono text-xs text-gray-100 whitespace-pre"
+                    className="font-mono text-xs text-primary whitespace-pre"
                     onMouseUp={handleMouseUp}
                     onContextMenu={handleContextMenu}
                 >

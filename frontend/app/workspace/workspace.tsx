@@ -31,7 +31,7 @@ const MacOSTabBarSpacer = memo(() => {
                     height: "calc(8px * var(--zoomfactor-inv))",
                     WebkitAppRegion: "drag",
                     backdropFilter: "blur(20px)",
-                    background: "rgba(0, 0, 0, 0.35)",
+                    background: "var(--tabbar-bg-color)",
                 } as React.CSSProperties
             }
         />
@@ -103,9 +103,9 @@ const WorkspaceElem = memo(() => {
     }, []);
 
     const innerHandleVisible = showLeftTabBar && aiPanelVisible;
-    const innerHandleClass = `bg-transparent hover:bg-zinc-500/20 transition-colors ${innerHandleVisible ? "w-0.5" : "w-0 pointer-events-none"}`;
+    const innerHandleClass = `bg-transparent hover:bg-hoverbg transition-colors ${innerHandleVisible ? "w-0.5" : "w-0 pointer-events-none"}`;
     const outerHandleVisible = showLeftTabBar || aiPanelVisible;
-    const outerHandleClass = `bg-transparent hover:bg-zinc-500/20 transition-colors ${outerHandleVisible ? "w-0.5" : "w-0 pointer-events-none"}`;
+    const outerHandleClass = `bg-transparent hover:bg-hoverbg transition-colors ${outerHandleVisible ? "w-0.5" : "w-0 pointer-events-none"}`;
 
     return (
         <div className="flex flex-col w-full flex-grow overflow-hidden">

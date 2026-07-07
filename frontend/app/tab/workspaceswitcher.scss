@@ -48,7 +48,7 @@
     .divider {
         width: 1px;
         height: 20px;
-        background: rgba(255, 255, 255, 0.08);
+        background: rgb(from var(--main-text-color) r g b / 0.08);
     }
 
     .scrollable {

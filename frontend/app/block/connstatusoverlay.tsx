@@ -89,7 +89,7 @@ const StalledOverlay = React.memo(
                         className="fa-solid fa-triangle-exclamation text-warning text-base shrink-0"
                         title="Connection Stalled"
                     ></i>
-                    <div className="text-[11px] font-semibold leading-4 tracking-[0.11px] text-white min-w-0 flex-1 break-words @max-xxs:hidden">
+                    <div className="text-[11px] font-semibold leading-4 tracking-[0.11px] text-primary min-w-0 flex-1 break-words @max-xxs:hidden">
                         Connection to "{connName}" is stalled
                         {elapsedTime && ` (no activity for ${elapsedTime})`}
                     </div>

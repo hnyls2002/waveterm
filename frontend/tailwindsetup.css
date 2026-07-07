@@ -32,6 +32,7 @@
     --color-modalbg: var(--modal-bg-color);
     --color-surface: #27272a;
     --color-surfacehover: #3f3f46;
+    --color-subtlebg: rgba(255, 255, 255, 0.05);
     --color-accentbg: rgba(88, 193, 66, 0.5);
     --color-hoverbg: rgba(255, 255, 255, 0.2);
     --color-highlightbg: var(--highlight-bg-color);
@@ -85,6 +86,7 @@
     --color-muted: #8a8f94;
     --color-surface: #f0f1f3;
     --color-surfacehover: #e6e7ea;
+    --color-subtlebg: rgba(0, 0, 0, 0.05);
     --color-hoverbg: rgba(0, 0, 0, 0.1);
 }
 

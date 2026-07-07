@@ -31,7 +31,7 @@ export const ErrorOverlay = memo(({ errorMsg, resetOverlay }: { errorMsg: ErrorM
                     <i className={iconClass}></i>
 
                     <div className="flex flex-col items-start gap-1 grow w-full shrink min-w-0">
-                        <div className="max-w-full text-xs font-semibold leading-4 tracking-[0.11px] text-white overflow-hidden">
+                        <div className="max-w-full text-xs font-semibold leading-4 tracking-[0.11px] text-primary overflow-hidden">
                             {errorMsg.status}
                         </div>
 

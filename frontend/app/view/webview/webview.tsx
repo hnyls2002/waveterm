@@ -783,8 +783,8 @@ const BookmarkTypeahead = memo(
             >
                 <SuggestionControlNoData>
                     <div className="text-center">
-                        <p className="text-lg font-bold text-gray-100">No Bookmarks Configured</p>
-                        <p className="text-sm text-gray-400 mt-1">
+                        <p className="text-lg font-bold text-primary">No Bookmarks Configured</p>
+                        <p className="text-sm text-muted mt-1">
                             Edit your <code className="font-mono">bookmarks.json</code> file to configure bookmarks.
                         </p>
                         <button
@@ -798,7 +798,7 @@ const BookmarkTypeahead = memo(
 
                 <SuggestionControlNoResults>
                     <div className="text-center">
-                        <p className="text-sm text-gray-400">No matching bookmarks</p>
+                        <p className="text-sm text-muted">No matching bookmarks</p>
                         <button
                             onClick={openBookmarksJson}
                             className="mt-3 px-4 py-2 text-sm font-medium text-black bg-accent hover:bg-accenthover rounded-lg cursor-pointer"

@@ -60,7 +60,7 @@ function StandardSessionContent({ viewModel, onClose }: StandardSessionContentPr
                 programs, and history alive through network changes, computer sleep, and Wave restarts.
             </div>
             <button
-                className="bg-zinc-700 text-foreground rounded px-3 py-1.5 text-xs font-medium hover:bg-zinc-600 transition-colors cursor-pointer flex items-center justify-center gap-2 mt-1"
+                className="bg-surface text-foreground rounded px-3 py-1.5 text-xs font-medium hover:bg-surfacehover transition-colors cursor-pointer flex items-center justify-center gap-2 mt-1"
                 onClick={handleRestartAsDurable}
             >
                 <i className="fa-solid fa-shield text-sky-500" />
@@ -148,7 +148,7 @@ function DurableAwaitingStart({ connected, viewModel, onClose }: DurableAwaiting
                 Configured for a durable session, but session hasn't started yet. Click below to start it manually.
             </div>
             <button
-                className="bg-zinc-700 text-foreground rounded px-3 py-1.5 text-xs font-medium hover:bg-zinc-600 transition-colors cursor-pointer flex items-center justify-center gap-2 mt-1"
+                className="bg-surface text-foreground rounded px-3 py-1.5 text-xs font-medium hover:bg-surfacehover transition-colors cursor-pointer flex items-center justify-center gap-2 mt-1"
                 onClick={handleStartSession}
             >
                 <i className="fa-solid fa-shield text-sky-500" />
@@ -222,14 +222,14 @@ function DurableEndedContent({ doneReason, startupError, viewModel, onClose }: D
                     </div>
                 )}
                 <button
-                    className="bg-zinc-700 text-foreground rounded px-3 py-1.5 text-xs font-medium hover:bg-zinc-600 transition-colors cursor-pointer flex items-center justify-center gap-2 mt-1"
+                    className="bg-surface text-foreground rounded px-3 py-1.5 text-xs font-medium hover:bg-surfacehover transition-colors cursor-pointer flex items-center justify-center gap-2 mt-1"
                     onClick={handleRestartSession}
                 >
                     <i className="fa-solid fa-shield text-sky-500" />
                     Restart Session
                 </button>
                 <button
-                    className="bg-zinc-700 text-foreground rounded px-3 py-1.5 text-xs font-medium hover:bg-zinc-600 transition-colors cursor-pointer flex items-center justify-center gap-2"
+                    className="bg-surface text-foreground rounded px-3 py-1.5 text-xs font-medium hover:bg-surfacehover transition-colors cursor-pointer flex items-center justify-center gap-2"
                     onClick={handleRestartAsStandard}
                 >
                     <i className="fa-sharp fa-regular fa-shield text-muted" />
@@ -249,7 +249,7 @@ function DurableEndedContent({ doneReason, startupError, viewModel, onClose }: D
             <div className="text-xs text-secondary leading-relaxed">{descriptionText}</div>
             {showRestartButton && (
                 <button
-                    className="bg-zinc-700 text-foreground rounded px-3 py-1.5 text-xs font-medium hover:bg-zinc-600 transition-colors cursor-pointer flex items-center justify-center gap-2 mt-1"
+                    className="bg-surface text-foreground rounded px-3 py-1.5 text-xs font-medium hover:bg-surfacehover transition-colors cursor-pointer flex items-center justify-center gap-2 mt-1"
                     onClick={handleRestartSession}
                 >
                     <i className="fa-solid fa-shield text-sky-500" />
@@ -425,7 +425,7 @@ export function DurableSessionFlyover({
                         }}
                         {...getFloatingProps()}
                         className={cn(
-                            "bg-zinc-800 border border-border rounded-md px-3 py-2.5 text-xs text-foreground shadow-xl z-50"
+                            "bg-surface border border-border rounded-md px-3 py-2.5 text-xs text-foreground shadow-xl z-50"
                         )}
                         onMouseDown={(e) => e.stopPropagation()}
                         onFocusCapture={(e) => e.stopPropagation()}
