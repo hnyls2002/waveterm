@@ -30,6 +30,8 @@
     --color-hover: rgba(255, 255, 255, 0.1);
     --color-border: rgba(255, 255, 255, 0.16);
     --color-modalbg: #232323;
+    --color-surface: #27272a;
+    --color-surfacehover: #3f3f46;
     --color-accentbg: rgba(88, 193, 66, 0.5);
     --color-hoverbg: rgba(255, 255, 255, 0.2);
     --color-highlightbg: rgba(255, 255, 255, 0.2);
@@ -74,6 +76,25 @@
     --container-tiny: 120px;
 
     --z-window-drag: 100;
+}
+
+/* Light theme overrides (accent, ansi, and status tokens intentionally kept). --color-white
+   stays actual white so genuine white-on-accent usages are unaffected. */
+:root[data-theme="light"] {
+    --color-background: #f0f0f3;
+    --color-foreground: #1a1c1e;
+    --color-primary: #1a1c1e;
+    --color-muted-foreground: #5c6165;
+    --color-secondary: #5c6165;
+    --color-muted: #8a8f94;
+    --color-panel: rgba(255, 255, 255, 0.7);
+    --color-hover: rgba(0, 0, 0, 0.055);
+    --color-border: rgba(0, 0, 0, 0.12);
+    --color-modalbg: #ffffff;
+    --color-surface: #f0f1f3;
+    --color-surfacehover: #e6e7ea;
+    --color-hoverbg: rgba(0, 0, 0, 0.1);
+    --color-highlightbg: rgba(0, 0, 0, 0.09);
 }
 
 /* Applied when body.nohover is set — used to suppress hover effects during tab remount to prevent ghost-hover flicker */
