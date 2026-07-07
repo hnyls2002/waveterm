@@ -314,7 +314,7 @@ function SuggestionControlInner({
             </div>
             {fetched &&
                 (suggestions.length > 0 ? (
-                    <div ref={dropdownRef} className="max-h-96 overflow-y-auto divide-y divide-gray-700">
+                    <div ref={dropdownRef} className="max-h-96 overflow-y-auto divide-y divide-border">
                         {suggestions.map((suggestion, index) => (
                             <div
                                 key={suggestion.suggestionid}

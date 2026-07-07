@@ -16,7 +16,7 @@ const KeyCap = ({ children }: { children: React.ReactNode }) => {
 const IconBox = ({ children, variant = "accent" }: { children: React.ReactNode; variant?: "accent" | "secondary" }) => {
     const colorClasses =
         variant === "secondary"
-            ? "text-secondary bg-white/5 border-white/10 [&_svg]:fill-secondary [&_svg_#arrow1]:fill-primary [&_svg_#arrow2]:fill-primary"
+            ? "text-secondary bg-subtlebg border-border [&_svg]:fill-secondary [&_svg_#arrow1]:fill-primary [&_svg_#arrow2]:fill-primary"
             : "text-accent-400 bg-accent-400/10 border-accent-400/20 [&_svg]:fill-accent-400 [&_svg_#arrow1]:fill-accent-400 [&_svg_#arrow2]:fill-accent-400";
 
     return (
@@ -95,13 +95,13 @@ const KeyBinding = ({ keyDecl }: { keyDecl: string }) => {
 const QuickTips = () => {
     return (
         <div className="flex flex-col w-full gap-6 @container">
-            <div className="flex flex-col gap-4 p-5 bg-gradient-to-br from-highlightbg/30 to-transparent hover:from-accent-400/5 rounded-lg border border-white/10 hover:border-accent-400/20 transition-all duration-300">
+            <div className="flex flex-col gap-4 p-5 bg-gradient-to-br from-highlightbg/30 to-transparent hover:from-accent-400/5 rounded-lg border border-border hover:border-accent-400/20 transition-all duration-300">
                 <div className="flex items-center gap-2 text-xl font-bold">
                     <div className="w-1 h-6 bg-accent-400 rounded-full"></div>
                     <span className="text-foreground">Header Icons</span>
                 </div>
                 <div className="grid grid-cols-1 @lg:grid-cols-2 gap-3">
-                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-white/5 transition-colors">
+                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-subtlebg transition-colors">
                         <IconBox variant="secondary">
                             <MagnifyIcon enabled={false} />
                         </IconBox>
@@ -110,7 +110,7 @@ const QuickTips = () => {
                             <KeyBinding keyDecl="Cmd:m" />
                         </div>
                     </div>
-                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-white/5 transition-colors">
+                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-subtlebg transition-colors">
                         <IconBox variant="secondary">
                             <i className="fa-solid fa-sharp fa-laptop fa-fw" />
                         </IconBox>
@@ -119,13 +119,13 @@ const QuickTips = () => {
                             <KeyBinding keyDecl="Cmd:g" />
                         </div>
                     </div>
-                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-white/5 transition-colors">
+                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-subtlebg transition-colors">
                         <IconBox variant="secondary">
                             <i className="fa-solid fa-sharp fa-cog fa-fw" />
                         </IconBox>
                         <span className="text-[15px]">Block Settings</span>
                     </div>
-                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-white/5 transition-colors">
+                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-subtlebg transition-colors">
                         <IconBox variant="secondary">
                             <i className="fa-solid fa-sharp fa-xmark-large fa-fw" />
                         </IconBox>
@@ -137,7 +137,7 @@ const QuickTips = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-4 p-5 bg-gradient-to-br from-highlightbg/30 to-transparent hover:from-accent-400/5 rounded-lg border border-white/10 hover:border-accent-400/20 transition-all duration-300">
+            <div className="flex flex-col gap-4 p-5 bg-gradient-to-br from-highlightbg/30 to-transparent hover:from-accent-400/5 rounded-lg border border-border hover:border-accent-400/20 transition-all duration-300">
                 <div className="flex items-center gap-2 text-xl font-bold">
                     <div className="w-1 h-6 bg-accent-400 rounded-full"></div>
                     <span className="text-foreground">Important Keybindings</span>
@@ -148,15 +148,15 @@ const QuickTips = () => {
                         <div className="text-sm text-accent-400 font-semibold uppercase tracking-wide mb-1">
                             Main Keybindings
                         </div>
-                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-white/5 transition-colors">
+                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-subtlebg transition-colors">
                             <span className="text-[15px]">New Tab</span>
                             <KeyBinding keyDecl="Cmd:t" />
                         </div>
-                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-white/5 transition-colors">
+                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-subtlebg transition-colors">
                             <span className="text-[15px]">New Terminal Block</span>
                             <KeyBinding keyDecl="Cmd:n" />
                         </div>
-                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-white/5 transition-colors">
+                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-subtlebg transition-colors">
                             <span className="text-[15px]">Open Wave AI Panel</span>
                             <KeyBinding keyDecl="Cmd:Shift:a" />
                         </div>
@@ -166,15 +166,15 @@ const QuickTips = () => {
                         <div className="text-sm text-accent-400 font-semibold uppercase tracking-wide mb-1">
                             Tab Switching ({PLATFORM === PlatformMacOS ? "Cmd" : "Alt"})
                         </div>
-                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-white/5 transition-colors">
+                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-subtlebg transition-colors">
                             <span className="text-[15px]">Switch To Nth Tab</span>
                             <KeyBinding keyDecl="Cmd:Digit" />
                         </div>
-                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-white/5 transition-colors">
+                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-subtlebg transition-colors">
                             <span className="text-[15px]">Previous Tab</span>
                             <KeyBinding keyDecl="Cmd:[" />
                         </div>
-                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-white/5 transition-colors">
+                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-subtlebg transition-colors">
                             <span className="text-[15px]">Next Tab</span>
                             <KeyBinding keyDecl="Cmd:]" />
                         </div>
@@ -184,15 +184,15 @@ const QuickTips = () => {
                         <div className="text-sm text-accent-400 font-semibold uppercase tracking-wide mb-1">
                             Block Navigation (Ctrl-Shift)
                         </div>
-                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-white/5 transition-colors">
+                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-subtlebg transition-colors">
                             <span className="text-[15px]">Navigate Between Blocks</span>
                             <KeyBinding keyDecl="Ctrl:Shift:Arrows" />
                         </div>
-                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-white/5 transition-colors">
+                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-subtlebg transition-colors">
                             <span className="text-[15px]">Focus Nth Block</span>
                             <KeyBinding keyDecl="Ctrl:Shift:Digit" />
                         </div>
-                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-white/5 transition-colors">
+                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-subtlebg transition-colors">
                             <span className="text-[15px]">Focus Wave AI</span>
                             <KeyBinding keyDecl="Ctrl:Shift:0" />
                         </div>
@@ -202,15 +202,15 @@ const QuickTips = () => {
                         <div className="text-sm text-accent-400 font-semibold uppercase tracking-wide mb-1">
                             Split Blocks
                         </div>
-                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-white/5 transition-colors">
+                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-subtlebg transition-colors">
                             <span className="text-[15px]">Split Right</span>
                             <KeyBinding keyDecl="Cmd:d" />
                         </div>
-                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-white/5 transition-colors">
+                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-subtlebg transition-colors">
                             <span className="text-[15px]">Split Below</span>
                             <KeyBinding keyDecl="Cmd:Shift:d" />
                         </div>
-                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-white/5 transition-colors">
+                        <div className="flex flex-col gap-0.5 p-2 rounded-md hover:bg-subtlebg transition-colors">
                             <span className="text-[15px]">Split in Direction</span>
                             <KeyBinding keyDecl="Ctrl:Shift:s + Arrows" />
                         </div>
@@ -218,7 +218,7 @@ const QuickTips = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-4 p-5 bg-gradient-to-br from-highlightbg/30 to-transparent hover:from-accent-400/5 rounded-lg border border-white/10 hover:border-accent-400/20 transition-all duration-300">
+            <div className="flex flex-col gap-4 p-5 bg-gradient-to-br from-highlightbg/30 to-transparent hover:from-accent-400/5 rounded-lg border border-border hover:border-accent-400/20 transition-all duration-300">
                 <div className="flex items-center gap-2 text-xl font-bold">
                     <div className="w-1 h-6 bg-accent-400 rounded-full"></div>
                     <span className="text-foreground">wsh commands</span>
@@ -243,13 +243,13 @@ const QuickTips = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-4 p-5 bg-gradient-to-br from-highlightbg/30 to-transparent hover:from-accent-400/5 rounded-lg border border-white/10 hover:border-accent-400/20 transition-all duration-300">
+            <div className="flex flex-col gap-4 p-5 bg-gradient-to-br from-highlightbg/30 to-transparent hover:from-accent-400/5 rounded-lg border border-border hover:border-accent-400/20 transition-all duration-300">
                 <div className="flex items-center gap-2 text-xl font-bold">
                     <div className="w-1 h-6 bg-accent-400 rounded-full"></div>
                     <span className="text-foreground">More Tips</span>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-white/5 transition-colors">
+                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-subtlebg transition-colors">
                         <IconBox variant="secondary">
                             <i className="fa-solid fa-sharp fa-computer-mouse fa-fw" />
                         </IconBox>
@@ -257,7 +257,7 @@ const QuickTips = () => {
                             <b>Tabs</b> - Right click any tab to change backgrounds or rename.
                         </span>
                     </div>
-                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-white/5 transition-colors">
+                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-subtlebg transition-colors">
                         <IconBox variant="secondary">
                             <i className="fa-solid fa-sharp fa-cog fa-fw" />
                         </IconBox>
@@ -265,7 +265,7 @@ const QuickTips = () => {
                             <b>Web View</b> - Click the gear in the web view to set your homepage
                         </span>
                     </div>
-                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-white/5 transition-colors">
+                    <div className="flex items-center gap-3 p-2 rounded-md hover:bg-subtlebg transition-colors">
                         <IconBox variant="secondary">
                             <i className="fa-solid fa-sharp fa-cog fa-fw" />
                         </IconBox>
@@ -276,7 +276,7 @@ const QuickTips = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-4 p-5 bg-gradient-to-br from-highlightbg/30 to-transparent hover:from-accent-400/5 rounded-lg border border-white/10 hover:border-accent-400/20 transition-all duration-300">
+            <div className="flex flex-col gap-4 p-5 bg-gradient-to-br from-highlightbg/30 to-transparent hover:from-accent-400/5 rounded-lg border border-border hover:border-accent-400/20 transition-all duration-300">
                 <div className="flex items-center gap-2 text-xl font-bold">
                     <div className="w-1 h-6 bg-accent-400 rounded-full"></div>
                     <span className="text-foreground">Need More Help?</span>

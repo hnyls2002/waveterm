@@ -84,7 +84,7 @@ interface SecretListViewProps {
 const SecretListView = memo(({ secretNames, onSelectSecret, onAddSecret }: SecretListViewProps) => {
     return (
         <div className="flex flex-col h-full w-full rounded-lg">
-            <div className="flex flex-col divide-y divide-zinc-700">
+            <div className="flex flex-col divide-y divide-border">
                 {secretNames.map((name) => (
                     <div
                         key={name}

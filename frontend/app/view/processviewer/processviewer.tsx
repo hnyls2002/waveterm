@@ -572,7 +572,7 @@ const TableHeader = React.memo(function TableHeader({
     const gridTemplate = getGridTemplate(platform);
     return (
         <div
-            className="grid w-full shrink-0 border-b border-white/10 bg-panel text-xs text-secondary font-medium select-none"
+            className="grid w-full shrink-0 border-b border-border bg-panel text-xs text-secondary font-medium select-none"
             style={{ gridTemplateColumns: gridTemplate }}
         >
             {cols.map((col) => (
@@ -580,7 +580,7 @@ const TableHeader = React.memo(function TableHeader({
                     key={col.key}
                     content={col.tooltip}
                     disable={!col.tooltip}
-                    divClassName={`px-2 py-1 cursor-pointer hover:text-primary hover:bg-white/5 transition-colors truncate flex items-center${col.align === "right" ? " justify-end" : ""}`}
+                    divClassName={`px-2 py-1 cursor-pointer hover:text-primary hover:bg-subtlebg transition-colors truncate flex items-center${col.align === "right" ? " justify-end" : ""}`}
                     divOnClick={() => model.setSort(col.key)}
                 >
                     <span className="truncate">{col.label}</span>
@@ -613,7 +613,7 @@ const ProcessRow = React.memo(function ProcessRow({
     if (proc.gone) {
         return (
             <div
-                className={`grid w-full text-xs transition-colors cursor-pointer ${selected ? "bg-accentbg" : "hover:bg-white/5"}`}
+                className={`grid w-full text-xs transition-colors cursor-pointer ${selected ? "bg-accentbg" : "hover:bg-subtlebg"}`}
                 style={{ gridTemplateColumns: gridTemplate, height: RowHeight }}
                 onClick={() => onSelect(proc.pid)}
                 onContextMenu={(e) => onContextMenu(proc.pid, e)}
@@ -632,7 +632,7 @@ const ProcessRow = React.memo(function ProcessRow({
     }
     return (
         <div
-            className={`grid w-full text-xs transition-colors cursor-pointer ${selected ? "bg-accentbg" : "hover:bg-white/5"}`}
+            className={`grid w-full text-xs transition-colors cursor-pointer ${selected ? "bg-accentbg" : "hover:bg-subtlebg"}`}
             style={{ gridTemplateColumns: gridTemplate, height: RowHeight }}
             onClick={() => onSelect(proc.pid)}
             onContextMenu={(e) => onContextMenu(proc.pid, e)}
@@ -667,14 +667,14 @@ const ActionStatusBar = React.memo(function ActionStatusBar({ model }: { model: 
 
     return (
         <div
-            className={`shrink-0 flex items-center px-3 py-1 text-xs border-t border-white/10 ${actionStatus.isError ? "text-error" : "text-secondary"}`}
+            className={`shrink-0 flex items-center px-3 py-1 text-xs border-t border-border ${actionStatus.isError ? "text-error" : "text-secondary"}`}
         >
             <span className="flex-1 truncate">
                 {actionStatus.isError ? `Error: ${actionStatus.message}` : actionStatus.message}
             </span>
             {actionStatus.isError && (
                 <button
-                    className="ml-2 shrink-0 flex items-center justify-center w-4 h-4 rounded hover:bg-white/10 transition-colors cursor-pointer text-secondary hover:text-primary"
+                    className="ml-2 shrink-0 flex items-center justify-center w-4 h-4 rounded hover:bg-hoverbg transition-colors cursor-pointer text-secondary hover:text-primary"
                     onClick={() => model.clearActionStatus()}
                 >
                     <i className="fa-sharp fa-solid fa-xmark text-[10px]" />
@@ -724,7 +724,7 @@ const StatusBar = React.memo(function StatusBar({ model, data, loading, error, w
 
     if (wide) {
         return (
-            <div className="shrink-0 text-xs text-secondary border-b border-white/10 bg-panel flex items-center gap-2 px-2 py-1">
+            <div className="shrink-0 text-xs text-secondary border-b border-border bg-panel flex items-center gap-2 px-2 py-1">
                 <div className="shrink-0 flex items-center">
                     <StatusIndicator model={model} />
                 </div>
@@ -738,7 +738,7 @@ const StatusBar = React.memo(function StatusBar({ model, data, loading, error, w
                 )}
                 {hasSummaryMem && (
                     <>
-                        <div className="w-px self-stretch bg-white/10 shrink-0" />
+                        <div className="w-px self-stretch bg-subtlebg shrink-0" />
                         <span className="shrink-0 whitespace-pre">
                             Mem{" "}
                             <span className="font-mono text-[11px]">
@@ -749,7 +749,7 @@ const StatusBar = React.memo(function StatusBar({ model, data, loading, error, w
                 )}
                 {hasSummaryCpu && (
                     <>
-                        <div className="w-px self-stretch bg-white/10 shrink-0" />
+                        <div className="w-px self-stretch bg-subtlebg shrink-0" />
                         <Tooltip
                             content={`100% per core · ${summary.numcpu} ${summary.numcpu === 1 ? "core" : "cores"} = ${summary.numcpu * 100}% max`}
                             placement="bottom"
@@ -766,7 +766,7 @@ const StatusBar = React.memo(function StatusBar({ model, data, loading, error, w
                 </span>
                 <Tooltip content={searchTooltip} placement="bottom">
                     <button
-                        className={`shrink-0 flex items-center justify-center w-4 h-4 rounded hover:bg-white/10 transition-colors cursor-pointer hover:text-primary ${searchOpen ? "text-primary" : "text-secondary"}`}
+                        className={`shrink-0 flex items-center justify-center w-4 h-4 rounded hover:bg-hoverbg transition-colors cursor-pointer hover:text-primary ${searchOpen ? "text-primary" : "text-secondary"}`}
                         onClick={() => (searchOpen ? model.closeSearch() : model.openSearch())}
                     >
                         <i className="fa-sharp fa-solid fa-magnifying-glass text-[10px]" />
@@ -777,7 +777,7 @@ const StatusBar = React.memo(function StatusBar({ model, data, loading, error, w
     }
 
     return (
-        <div className="shrink-0 text-xs text-secondary border-b border-white/10 bg-panel flex items-center px-2 py-1">
+        <div className="shrink-0 text-xs text-secondary border-b border-border bg-panel flex items-center px-2 py-1">
             <div className="shrink-0 flex items-center mr-1">
                 <StatusIndicator model={model} />
             </div>
@@ -822,7 +822,7 @@ const StatusBar = React.memo(function StatusBar({ model, data, loading, error, w
                 </div>
                 <Tooltip content={searchTooltip} placement="bottom">
                     <button
-                        className={`shrink-0 ml-1 flex items-center justify-center w-4 h-4 rounded hover:bg-white/10 transition-colors cursor-pointer hover:text-primary ${searchOpen ? "text-primary" : "text-secondary"}`}
+                        className={`shrink-0 ml-1 flex items-center justify-center w-4 h-4 rounded hover:bg-hoverbg transition-colors cursor-pointer hover:text-primary ${searchOpen ? "text-primary" : "text-secondary"}`}
                         onClick={() => (searchOpen ? model.closeSearch() : model.openSearch())}
                     >
                         <i className="fa-sharp fa-solid fa-magnifying-glass text-[10px]" />
@@ -849,7 +849,7 @@ const SearchBar = React.memo(function SearchBar({ model }: { model: ProcessViewe
     if (!searchOpen) return null;
 
     return (
-        <div className="shrink-0 flex items-center gap-1 px-2 py-1 border-b border-white/10 bg-panel">
+        <div className="shrink-0 flex items-center gap-1 px-2 py-1 border-b border-border bg-panel">
             <input
                 ref={inputRef}
                 type="text"
@@ -865,7 +865,7 @@ const SearchBar = React.memo(function SearchBar({ model }: { model: ProcessViewe
                 }}
             />
             <button
-                className="shrink-0 flex items-center justify-center w-4 h-4 rounded hover:bg-white/10 transition-colors cursor-pointer text-secondary hover:text-primary"
+                className="shrink-0 flex items-center justify-center w-4 h-4 rounded hover:bg-hoverbg transition-colors cursor-pointer text-secondary hover:text-primary"
                 onClick={() => model.closeSearch()}
             >
                 <i className="fa-sharp fa-solid fa-xmark text-[10px]" />

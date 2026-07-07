@@ -99,7 +99,7 @@ const BuilderWorkspace = memo(() => {
                 <Panel defaultSize={layout.chat} minSize={20}>
                     <AIPanel roundTopLeft={false} />
                 </Panel>
-                <PanelResizeHandle className="w-0.5 bg-transparent hover:bg-gray-500/20 transition-colors" />
+                <PanelResizeHandle className="w-0.5 bg-transparent hover:bg-hoverbg transition-colors" />
                 <Panel defaultSize={100 - layout.chat} minSize={20}>
                     <div
                         className={cn(
@@ -114,7 +114,7 @@ const BuilderWorkspace = memo(() => {
                             <Panel defaultSize={layout.app} minSize={20}>
                                 <BuilderAppPanel />
                             </Panel>
-                            <PanelResizeHandle className="h-0.5 bg-transparent hover:bg-gray-500/20 transition-colors" />
+                            <PanelResizeHandle className="h-0.5 bg-transparent hover:bg-hoverbg transition-colors" />
                             <Panel
                                 defaultSize={layout.build}
                                 minSize={20}
