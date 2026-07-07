@@ -5,7 +5,16 @@ import { ClientService, ObjectService, WindowService, WorkspaceService } from "@
 import { waveEventSubscribeSingle } from "@/app/store/wps";
 import { RpcApi } from "@/app/store/wshclientapi";
 import { fireAndForget } from "@/util/util";
-import { BaseWindow, BaseWindowConstructorOptions, dialog, globalShortcut, ipcMain, screen, webContents } from "electron";
+import {
+    BaseWindow,
+    BaseWindowConstructorOptions,
+    dialog,
+    globalShortcut,
+    ipcMain,
+    nativeTheme,
+    screen,
+    webContents,
+} from "electron";
 import { globalEvents } from "emain/emain-events";
 import path from "path";
 import { debounce } from "throttle-debounce";
@@ -1104,15 +1113,16 @@ export function registerGlobalHotkey(rawGlobalHotKey: string) {
     }
 }
 
-export function initGlobalHotkeyEventSubscription() {
+export function initConfigEventSubscription() {
     waveEventSubscribeSingle({
         eventType: "config",
         handler: (event) => {
             try {
-                const hotkey = event?.data?.fullconfig?.settings?.["app:globalhotkey"];
-                registerGlobalHotkey(hotkey ?? null);
+                const settings = event?.data?.fullconfig?.settings;
+                registerGlobalHotkey(settings?.["app:globalhotkey"] ?? null);
+                nativeTheme.themeSource = settings?.["app:theme"] === "light" ? "light" : "dark";
             } catch (e) {
-                console.log("error handling config event for globalhotkey", e);
+                console.log("error handling config event", e);
             }
         },
     });
