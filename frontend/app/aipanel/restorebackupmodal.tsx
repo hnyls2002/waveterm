@@ -43,8 +43,8 @@ export const RestoreBackupModal = memo(({ part }: RestoreBackupModalProps) => {
             <Modal className="restore-backup-modal pb-5 pr-5" onClose={handleClose} onOk={handleClose} okLabel="Close">
                 <div className="flex flex-col gap-4 pt-4 pb-4 max-w-xl">
                     <div className="font-semibold text-lg text-green-500">Backup Successfully Restored</div>
-                    <div className="text-sm text-gray-300 leading-relaxed">
-                        The file <span className="font-mono text-white break-all">{toolData.inputfilename}</span> has
+                    <div className="text-sm text-secondary leading-relaxed">
+                        The file <span className="font-mono text-primary break-all">{toolData.inputfilename}</span> has
                         been restored to its previous state.
                     </div>
                 </div>
@@ -57,10 +57,10 @@ export const RestoreBackupModal = memo(({ part }: RestoreBackupModalProps) => {
             <Modal className="restore-backup-modal pb-5 pr-5" onClose={handleClose} onOk={handleClose} okLabel="Close">
                 <div className="flex flex-col gap-4 pt-4 pb-4 max-w-xl">
                     <div className="font-semibold text-lg text-red-500">Failed to Restore Backup</div>
-                    <div className="text-sm text-gray-300 leading-relaxed">
+                    <div className="text-sm text-secondary leading-relaxed">
                         An error occurred while restoring the backup:
                     </div>
-                    <div className="text-sm text-red-400 font-mono bg-zinc-800 p-3 rounded break-all">{error}</div>
+                    <div className="text-sm text-red-400 font-mono bg-surface p-3 rounded break-all">{error}</div>
                 </div>
             </Modal>
         );
@@ -81,12 +81,12 @@ export const RestoreBackupModal = memo(({ part }: RestoreBackupModalProps) => {
         >
             <div className="flex flex-col gap-4 pt-4 pb-4 max-w-xl">
                 <div className="font-semibold text-lg">Restore File Backup</div>
-                <div className="text-sm text-gray-300 leading-relaxed">
-                    This will restore <span className="font-mono text-white break-all">{toolData.inputfilename}</span>{" "}
+                <div className="text-sm text-secondary leading-relaxed">
+                    This will restore <span className="font-mono text-primary break-all">{toolData.inputfilename}</span>{" "}
                     to its state before this edit was made
                     {toolData.runts && <span> ({formatTimestamp(toolData.runts)})</span>}.
                 </div>
-                <div className="text-sm text-gray-300 leading-relaxed">
+                <div className="text-sm text-secondary leading-relaxed">
                     Any changes made by this edit and subsequent edits will be lost.
                 </div>
             </div>
