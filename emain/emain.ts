@@ -49,7 +49,7 @@ import {
     getQuakeWindow,
     getWaveWindowById,
     getWaveWindowByWorkspaceId,
-    initGlobalHotkeyEventSubscription,
+    initConfigEventSubscription,
     registerGlobalHotkey,
     relaunchBrowserWindows,
     WaveBrowserWindow,
@@ -65,7 +65,7 @@ let confirmQuit = true;
 const waveDataDir = getWaveDataDir();
 const waveConfigDir = getWaveConfigDir();
 
-electron.nativeTheme.themeSource = "dark";
+electron.nativeTheme.themeSource = getLaunchSettings()?.["app:theme"] === "light" ? "light" : "dark";
 
 console.log = log;
 console.log(
@@ -457,7 +457,7 @@ async function appMain() {
     if (rawGlobalHotKey) {
         registerGlobalHotkey(rawGlobalHotKey);
     }
-    initGlobalHotkeyEventSubscription();
+    initConfigEventSubscription();
 }
 
 appMain().catch((e) => {

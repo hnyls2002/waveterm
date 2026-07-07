@@ -158,3 +158,38 @@
     --button-yellow-bg: #c4a000;
     --button-yellow-hover-bg: #fce94f;
 }
+
+/* Light theme overrides (accent, terminal, and status colors intentionally kept) */
+:root[data-theme="light"] {
+    --main-text-color: #1a1c1e;
+    --secondary-text-color: #5c6165;
+    --grey-text-color: #8a8f94;
+    --main-bg-color: #f0f0f3;
+    --border-color: rgba(0, 0, 0, 0.12);
+    --panel-bg-color: rgba(255, 255, 255, 0.7);
+    --highlight-bg-color: rgba(0, 0, 0, 0.09);
+    --hover-bg-color: rgba(0, 0, 0, 0.055);
+    --block-bg-color: #fbfbfc;
+    --block-bg-solid-color: #fbfbfc;
+
+    --keybinding-color: #333333;
+    --keybinding-bg-color: #e8e8e8;
+    --keybinding-border-color: #cccccc;
+
+    --scrollbar-thumb-color: rgba(0, 0, 0, 0.2);
+    --scrollbar-thumb-hover-color: rgba(0, 0, 0, 0.4);
+    --scrollbar-thumb-active-color: rgba(0, 0, 0, 0.5);
+
+    --modal-bg-color: #ffffff;
+    --modal-header-bottom-border-color: rgba(0, 0, 0, 0.12);
+    --modal-border-color: rgba(0, 0, 0, 0.12);
+    --modal-shadow-color: rgba(0, 0, 0, 0.25);
+
+    --form-element-border-color: rgba(0, 0, 0, 0.15);
+    --form-element-secondary-color: rgba(0, 0, 0, 0.15);
+
+    --button-grey-bg: rgba(0, 0, 0, 0.05);
+    --button-grey-hover-bg: rgba(0, 0, 0, 0.09);
+    --button-grey-border-color: rgba(0, 0, 0, 0.12);
+    --button-grey-outlined-color: rgba(0, 0, 0, 0.55);
+}

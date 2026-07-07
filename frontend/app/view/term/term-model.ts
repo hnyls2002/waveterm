@@ -237,7 +237,12 @@ export class TermViewModel implements ViewModel {
         this.termBPMAtom = getOverrideConfigAtom(blockId, "term:allowbracketedpaste");
         this.termThemeNameAtom = useBlockAtom(blockId, "termthemeatom", () => {
             return jotai.atom<string>((get) => {
-                return get(getOverrideConfigAtom(this.blockId, "term:theme")) ?? DefaultTermTheme;
+                const explicit = get(getOverrideConfigAtom(this.blockId, "term:theme"));
+                if (explicit != null) {
+                    return explicit;
+                }
+                const appTheme = get(getSettingsKeyAtom("app:theme"));
+                return appTheme === "light" ? "iterm-light" : DefaultTermTheme;
             });
         });
         this.termTransparencyAtom = useBlockAtom(blockId, "termtransparencyatom", () => {
