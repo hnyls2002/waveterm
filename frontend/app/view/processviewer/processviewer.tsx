@@ -738,7 +738,7 @@ const StatusBar = React.memo(function StatusBar({ model, data, loading, error, w
                 )}
                 {hasSummaryMem && (
                     <>
-                        <div className="w-px self-stretch bg-subtlebg shrink-0" />
+                        <div className="w-px self-stretch bg-border shrink-0" />
                         <span className="shrink-0 whitespace-pre">
                             Mem{" "}
                             <span className="font-mono text-[11px]">
@@ -749,7 +749,7 @@ const StatusBar = React.memo(function StatusBar({ model, data, loading, error, w
                 )}
                 {hasSummaryCpu && (
                     <>
-                        <div className="w-px self-stretch bg-subtlebg shrink-0" />
+                        <div className="w-px self-stretch bg-border shrink-0" />
                         <Tooltip
                             content={`100% per core · ${summary.numcpu} ${summary.numcpu === 1 ? "core" : "cores"} = ${summary.numcpu * 100}% max`}
                             placement="bottom"
