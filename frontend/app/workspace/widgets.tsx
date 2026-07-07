@@ -79,7 +79,7 @@ const Widget = memo(({ widget, mode, env }: WidgetPropsType) => {
             placement="left"
             disable={shouldDisableTooltip}
             divClassName={clsx(
-                "flex flex-col justify-center items-center w-full py-1.5 pr-0.5 text-secondary overflow-hidden rounded-sm hover:bg-hoverbg hover:text-white cursor-pointer",
+                "flex flex-col justify-center items-center w-full py-1.5 pr-0.5 text-secondary overflow-hidden rounded-sm hover:bg-hoverbg hover:text-primary cursor-pointer",
                 mode === "supercompact" ? "text-sm" : "text-lg",
                 widget["display:hidden"] && "hidden"
             )}
@@ -242,7 +242,7 @@ const AppsFloatingWindow = memo(({ isOpen, onClose, referenceElement }: Floating
                 </div>
                 <button
                     type="button"
-                    className="w-full px-4 py-2 border-t border-border text-xs text-secondary text-center hover:bg-hoverbg hover:text-white transition-colors cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full px-4 py-2 border-t border-border text-xs text-secondary text-center hover:bg-hoverbg hover:text-primary transition-colors cursor-pointer flex items-center justify-center gap-2"
                     onClick={handleOpenBuilder}
                 >
                     <i className="fa fa-solid fa-hammer"></i>
@@ -348,7 +348,7 @@ const SettingsFloatingWindow = memo(
                     {menuItems.map((item, idx) => (
                         <div
                             key={idx}
-                            className="flex items-center gap-3 px-3 py-2 rounded hover:bg-hoverbg cursor-pointer transition-colors text-secondary hover:text-white"
+                            className="flex items-center gap-3 px-3 py-2 rounded hover:bg-hoverbg cursor-pointer transition-colors text-secondary hover:text-primary"
                             onClick={item.onClick}
                         >
                             <div className="text-lg w-5 flex justify-center">
@@ -474,7 +474,7 @@ const Widgets = memo(() => {
                             {env.isDev() || featureWaveAppBuilder ? (
                                 <div
                                     ref={appsButtonRef}
-                                    className="flex flex-col justify-center items-center w-full py-1.5 pr-0.5 text-secondary text-sm overflow-hidden rounded-sm hover:bg-hoverbg hover:text-white cursor-pointer"
+                                    className="flex flex-col justify-center items-center w-full py-1.5 pr-0.5 text-secondary text-sm overflow-hidden rounded-sm hover:bg-hoverbg hover:text-primary cursor-pointer"
                                     onClick={() => setIsAppsOpen(!isAppsOpen)}
                                 >
                                     <Tooltip content="Local WaveApps" placement="left" disable={isAppsOpen}>
@@ -486,7 +486,7 @@ const Widgets = memo(() => {
                             ) : null}
                             <div
                                 ref={settingsButtonRef}
-                                className="flex flex-col justify-center items-center w-full py-1.5 pr-0.5 text-secondary text-sm overflow-hidden rounded-sm hover:bg-hoverbg hover:text-white cursor-pointer"
+                                className="flex flex-col justify-center items-center w-full py-1.5 pr-0.5 text-secondary text-sm overflow-hidden rounded-sm hover:bg-hoverbg hover:text-primary cursor-pointer"
                                 onClick={() => setIsSettingsOpen(!isSettingsOpen)}
                             >
                                 <Tooltip
@@ -513,7 +513,7 @@ const Widgets = memo(() => {
                         {env.isDev() || featureWaveAppBuilder ? (
                             <div
                                 ref={appsButtonRef}
-                                className="flex flex-col justify-center items-center w-full py-1.5 pr-0.5 text-secondary text-lg overflow-hidden rounded-sm hover:bg-hoverbg hover:text-white cursor-pointer"
+                                className="flex flex-col justify-center items-center w-full py-1.5 pr-0.5 text-secondary text-lg overflow-hidden rounded-sm hover:bg-hoverbg hover:text-primary cursor-pointer"
                                 onClick={() => setIsAppsOpen(!isAppsOpen)}
                             >
                                 <Tooltip content="Local WaveApps" placement="left" disable={isAppsOpen}>
@@ -532,7 +532,7 @@ const Widgets = memo(() => {
                         ) : null}
                         <div
                             ref={settingsButtonRef}
-                            className="flex flex-col justify-center items-center w-full py-1.5 pr-0.5 text-secondary text-lg overflow-hidden rounded-sm hover:bg-hoverbg hover:text-white cursor-pointer"
+                            className="flex flex-col justify-center items-center w-full py-1.5 pr-0.5 text-secondary text-lg overflow-hidden rounded-sm hover:bg-hoverbg hover:text-primary cursor-pointer"
                             onClick={() => setIsSettingsOpen(!isSettingsOpen)}
                         >
                             <Tooltip

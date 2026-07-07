@@ -245,8 +245,8 @@ function LauncherView({ blockId, model }: ViewComponentProps<LauncherViewModel>)
                             "flex flex-col items-center justify-center cursor-pointer rounded-md p-2 text-center",
                             "transition-colors duration-150",
                             index === selectedIndex
-                                ? "bg-white/20 text-white"
-                                : "bg-white/5 hover:bg-white/10 text-secondary hover:text-white"
+                                ? "bg-highlightbg text-primary"
+                                : "text-secondary hover:bg-hoverbg hover:text-primary"
                         )}
                         style={{
                             width: finalTileWidth,

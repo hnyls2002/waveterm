@@ -38,7 +38,7 @@
 }
 
 .block-frame-div-url {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgb(from var(--main-text-color) r g b / 0.1);
 
     input {
         opacity: 1;
