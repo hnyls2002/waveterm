@@ -80,6 +80,22 @@ declare global {
         conn?: {[key: string]: number};
     };
 
+    // wshrpc.AgentSessionInfo
+    type AgentSessionInfo = {
+        sessionid: string;
+        status: string;
+        cwd?: string;
+        transcriptpath?: string;
+        blockid?: string;
+        tabid?: string;
+        workspaceid?: string;
+        pid?: number;
+        lastprompt?: string;
+        lastnotification?: string;
+        startts?: number;
+        updatedts?: number;
+    };
+
     // wshrpc.AiMessageData
     type AiMessageData = {
         message?: string;

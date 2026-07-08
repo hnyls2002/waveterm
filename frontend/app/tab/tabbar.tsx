@@ -1,6 +1,7 @@
 // Copyright 2026, Command Line Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { AgentsButton } from "@/app/agentspanel/agentspanel";
 import { Tooltip } from "@/app/element/tooltip";
 import { TabRpcClient } from "@/app/store/wshrpcutil";
 import { useWaveEnv } from "@/app/waveenv/waveenv";
@@ -614,6 +615,7 @@ const TabBar = memo(({ workspace, noTabs }: TabBarProps) => {
                 </div>
             )}
             <WaveAIButton divRef={waveAIButtonRef} />
+            <AgentsButton />
             <Tooltip
                 content="Workspace Switcher"
                 placement="bottom"

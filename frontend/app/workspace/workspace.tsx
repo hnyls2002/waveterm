@@ -1,6 +1,8 @@
 // Copyright 2026, Command Line Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { AgentsPanel } from "@/app/agentspanel/agentspanel";
+import { AgentsPanelModel } from "@/app/agentspanel/agentspanel-model";
 import { AIPanel } from "@/app/aipanel/aipanel";
 import { ErrorBoundary } from "@/app/element/errorboundary";
 import { CenteredDiv } from "@/app/element/quickelems";
@@ -47,6 +49,7 @@ const WorkspaceElem = memo(() => {
     const showLeftTabBar = tabBarPosition === "left";
     const aiPanelVisible = useAtomValue(workspaceLayoutModel.panelVisibleAtom);
     const widgetsSidebarVisible = useAtomValue(workspaceLayoutModel.widgetsSidebarVisibleAtom);
+    const agentsPanelVisible = useAtomValue(AgentsPanelModel.getInstance().visibleAtom);
     const windowWidth = window.innerWidth;
     const leftGroupInitialPct = workspaceLayoutModel.getLeftGroupInitialPercentage(windowWidth, showLeftTabBar);
     const innerVTabInitialPct = workspaceLayoutModel.getInnerVTabInitialPercentage(windowWidth, showLeftTabBar);
@@ -158,6 +161,7 @@ const WorkspaceElem = memo(() => {
                                 <CenteredDiv>No Active Tab</CenteredDiv>
                             ) : (
                                 <div className="flex flex-row h-full">
+                                    {agentsPanelVisible && <AgentsPanel />}
                                     <TabContent key={tabId} tabId={tabId} noTopPadding={showLeftTabBar && isMacOS()} />
                                     {widgetsSidebarVisible && <Widgets />}
                                 </div>
