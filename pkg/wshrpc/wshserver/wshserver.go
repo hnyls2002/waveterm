@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/skratchdot/open-golang/open"
+	"github.com/wavetermdev/waveterm/pkg/agenttracker"
 	"github.com/wavetermdev/waveterm/pkg/aiusechat"
 	"github.com/wavetermdev/waveterm/pkg/aiusechat/chatstore"
 	"github.com/wavetermdev/waveterm/pkg/aiusechat/uctypes"
@@ -942,6 +943,10 @@ func (ws *WshServer) BlocksListCommand(
 		}
 	}
 	return results, nil
+}
+
+func (ws *WshServer) AgentTrackerListCommand(ctx context.Context) ([]wshrpc.AgentSessionInfo, error) {
+	return agenttracker.ListSessions(), nil
 }
 
 func (ws *WshServer) WorkspaceListCommand(ctx context.Context) ([]wshrpc.WorkspaceInfoData, error) {

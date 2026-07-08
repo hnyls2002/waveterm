@@ -234,6 +234,21 @@ function makeViewMenu(
         },
         { type: "separator" },
         {
+            label: "Toggle Wave AI Panel",
+            accelerator: "CommandOrControl+Shift+A",
+            click: (_, window) => {
+                (getWindowWebContents(window) ?? webContents)?.send("menu-item-toggle-panel", "waveai");
+            },
+        },
+        {
+            label: "Toggle Agents Panel",
+            accelerator: "CommandOrControl+Shift+G",
+            click: (_, window) => {
+                (getWindowWebContents(window) ?? webContents)?.send("menu-item-toggle-panel", "agents");
+            },
+        },
+        { type: "separator" },
+        {
             label: "Reset Zoom",
             accelerator: "CommandOrControl+0",
             click: (_, window) => {

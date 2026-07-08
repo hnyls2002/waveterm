@@ -1,6 +1,7 @@
 // Copyright 2026, Command Line Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { AgentsPanelModel } from "@/app/agentspanel/agentspanel-model";
 import { WaveAIModel } from "@/app/aipanel/waveai-model";
 import { FocusManager } from "@/app/store/focusManager";
 import {
@@ -744,6 +745,18 @@ function registerGlobalKeys() {
         const currentVisible = WorkspaceLayoutModel.getInstance().getAIPanelVisible();
         WorkspaceLayoutModel.getInstance().setAIPanelVisible(!currentVisible);
         return true;
+    });
+    globalKeyMap.set("Cmd:Shift:g", () => {
+        AgentsPanelModel.getInstance().toggle();
+        return true;
+    });
+    getApi().onMenuItemTogglePanel((panel: string) => {
+        if (panel === "waveai") {
+            const currentVisible = WorkspaceLayoutModel.getInstance().getAIPanelVisible();
+            WorkspaceLayoutModel.getInstance().setAIPanelVisible(!currentVisible);
+        } else if (panel === "agents") {
+            AgentsPanelModel.getInstance().toggle();
+        }
     });
     const allKeys = Array.from(globalKeyMap.keys());
     // special case keys, handled by web view

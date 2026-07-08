@@ -16,6 +16,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/wavetermdev/waveterm/pkg/aiusechat"
 	"github.com/wavetermdev/waveterm/pkg/authkey"
+	"github.com/wavetermdev/waveterm/pkg/agenttracker"
 	"github.com/wavetermdev/waveterm/pkg/blockcontroller"
 	"github.com/wavetermdev/waveterm/pkg/blocklogger"
 	"github.com/wavetermdev/waveterm/pkg/filebackup"
@@ -575,6 +576,7 @@ func main() {
 	blocklogger.InitBlockLogger()
 	jobcontroller.InitJobController()
 	blockcontroller.InitBlockController()
+	agenttracker.InitAgentTracker()
 	err = wcore.InitBadgeStore()
 	if err != nil {
 		log.Printf("error initializing badge store: %v\n", err)
