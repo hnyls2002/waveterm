@@ -94,6 +94,8 @@ declare global {
         lastnotification?: string;
         startts?: number;
         updatedts?: number;
+        interactive?: boolean;
+        endreason?: string;
     };
 
     // wshrpc.AiMessageData
@@ -1606,6 +1608,7 @@ declare global {
         "debug:panictype"?: string;
         "block:view"?: string;
         "block:controller"?: string;
+        "block:subblock"?: boolean;
         "ai:backendtype"?: string;
         "ai:local"?: boolean;
         "wsh:cmd"?: string;

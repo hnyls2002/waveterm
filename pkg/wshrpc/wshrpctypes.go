@@ -496,6 +496,8 @@ type AgentSessionInfo struct {
 	LastNotification string `json:"lastnotification,omitempty"`
 	StartTs          int64  `json:"startts,omitempty"`
 	UpdatedTs        int64  `json:"updatedts,omitempty"`
+	Interactive      bool   `json:"interactive,omitempty"`
+	EndReason        string `json:"endreason,omitempty"`
 }
 
 type BlocksListRequest struct {

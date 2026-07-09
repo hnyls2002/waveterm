@@ -115,3 +115,17 @@ _waveterm_si_preexec() {
 # Add our functions to the bash-preexec arrays
 precmd_functions+=(_waveterm_si_precmd)
 preexec_functions+=(_waveterm_si_preexec)
+
+# auto-resume the claude session that was live in this block when Wave shut
+# down (set by the block controller from agenttracker state). unset happens
+# BEFORE launch so nested/exec'd shells and claude's own children never
+# re-trigger; running claude as a plain command (not exec) means a failed or
+# finished resume falls back to a normal prompt.
+if [ -n "$WAVETERM_CLAUDE_RESUME" ]; then
+    _waveterm_claude_resume_sid="$WAVETERM_CLAUDE_RESUME"
+    unset WAVETERM_CLAUDE_RESUME
+    if command -v claude >/dev/null 2>&1; then
+        claude --resume "$_waveterm_claude_resume_sid"
+    fi
+    unset _waveterm_claude_resume_sid
+fi

@@ -31,6 +31,15 @@ const (
 	Status_Ended     = "ended"
 )
 
+// SessionEnd reasons that mean the user deliberately exited claude. Anything
+// else -- notably "other", which covers both SIGHUP on Wave shutdown and -p
+// mode completion -- keeps the session eligible for auto-resume.
+var deliberateEndReasons = map[string]bool{
+	"prompt_input_exit": true,
+	"logout":            true,
+	"clear":             true,
+}
+
 const (
 	HookEvent_SessionStart      = "SessionStart"
 	HookEvent_UserPromptSubmit  = "UserPromptSubmit"
@@ -64,6 +73,8 @@ type hookEvent struct {
 	Pid            int    `json:"pid,omitempty"`
 	Prompt         string `json:"prompt,omitempty"`
 	Message        string `json:"message,omitempty"`
+	Reason         string `json:"reason,omitempty"`
+	Model          string `json:"model,omitempty"`
 }
 
 type AgentTracker struct {
@@ -101,6 +112,44 @@ func ListSessions() []wshrpc.AgentSessionInfo {
 		rtn = append(rtn, *session)
 	}
 	return rtn
+}
+
+// GetResumeCandidate returns the sessionid that a fresh shell in the given
+// block should `claude --resume`, or "" if there is none. The candidate is the
+// most recently active interactive session in the block, and it loses
+// candidacy if the user deliberately exited it or if its process is still
+// alive (e.g. running inside tmux -- attaching a second client would corrupt
+// the session).
+func GetResumeCandidate(blockId string) string {
+	best := findResumeCandidate(blockId)
+	if best == nil {
+		return ""
+	}
+	if best.Pid > 0 {
+		if exists, err := process.PidExists(int32(best.Pid)); err == nil && exists {
+			return ""
+		}
+	}
+	return best.SessionId
+}
+
+func findResumeCandidate(blockId string) *wshrpc.AgentSessionInfo {
+	globalTracker.lock.Lock()
+	defer globalTracker.lock.Unlock()
+	var best *wshrpc.AgentSessionInfo
+	for _, session := range globalTracker.sessions {
+		if session.BlockId != blockId || !session.Interactive {
+			continue
+		}
+		if best == nil || session.UpdatedTs > best.UpdatedTs {
+			best = session
+		}
+	}
+	if best == nil || deliberateEndReasons[best.EndReason] {
+		return nil
+	}
+	rtn := *best
+	return &rtn
 }
 
 func publishUpdate() {
@@ -253,6 +302,10 @@ func (t *AgentTracker) applyEvent_withlock(event *hookEvent) bool {
 	case HookEvent_SessionStart:
 		// resume of an ended session revives it in place (StartTs preserved)
 		session.Status = Status_Idle
+		// -p (print mode) SessionStart payloads carry no "model" field; those
+		// one-shot sessions must never become resume candidates
+		session.Interactive = event.Model != ""
+		session.EndReason = ""
 	case HookEvent_UserPromptSubmit:
 		session.Status = Status_Working
 		if event.Prompt != "" && event.Prompt != session.LastPrompt {
@@ -276,6 +329,7 @@ func (t *AgentTracker) applyEvent_withlock(event *hookEvent) bool {
 		}
 	case HookEvent_SessionEnd:
 		session.Status = Status_Ended
+		session.EndReason = event.Reason
 	}
 	if session.Status != oldStatus {
 		visibleChange = true
