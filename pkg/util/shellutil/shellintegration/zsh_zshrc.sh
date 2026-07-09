@@ -140,3 +140,17 @@ autoload -U add-zsh-hook
 add-zsh-hook precmd  _waveterm_si_precmd
 add-zsh-hook preexec _waveterm_si_preexec
 add-zsh-hook chpwd   _waveterm_si_osc7
+
+# auto-resume the claude session that was live in this block when Wave shut
+# down (set by the block controller from agenttracker state). unset happens
+# BEFORE launch so nested/exec'd shells and claude's own children never
+# re-trigger; running claude as a plain command (not exec) means a failed or
+# finished resume falls back to a normal prompt.
+if [[ -n "$WAVETERM_CLAUDE_RESUME" ]]; then
+  _waveterm_claude_resume_sid="$WAVETERM_CLAUDE_RESUME"
+  unset WAVETERM_CLAUDE_RESUME
+  if (( $+commands[claude] )); then
+    claude --resume "$_waveterm_claude_resume_sid"
+  fi
+  unset _waveterm_claude_resume_sid
+fi

@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/wavetermdev/waveterm/pkg/agenttracker"
 	"github.com/wavetermdev/waveterm/pkg/blocklogger"
 	"github.com/wavetermdev/waveterm/pkg/filestore"
 	"github.com/wavetermdev/waveterm/pkg/jobcontroller"
@@ -482,6 +483,13 @@ func makeSwapToken(ctx context.Context, logCtx context.Context, blockId string, 
 	}
 	token.Env["WAVETERM_CLIENTID"] = wstore.GetClientId()
 	token.Env["WAVETERM_CONN"] = remoteName
+	// agenttracker only sees hooks from local claude processes, so resume
+	// injection is local-shell only (remote blocks use durable jobs instead)
+	if conncontroller.IsLocalConnName(remoteName) && blockMeta.GetString(waveobj.MetaKey_Controller, "") == BlockController_Shell {
+		if resumeSid := agenttracker.GetResumeCandidate(blockId); resumeSid != "" {
+			token.Env["WAVETERM_CLAUDE_RESUME"] = resumeSid
+		}
+	}
 	envMap, err := resolveEnvMap(blockId, blockMeta, remoteName)
 	if err != nil {
 		log.Printf("error resolving env map: %v\n", err)
