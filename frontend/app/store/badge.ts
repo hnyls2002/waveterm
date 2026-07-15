@@ -220,7 +220,7 @@ function setupBadgesSubscription() {
                 return;
             }
             const existing = globalStore.get(curAtom);
-            if (existing == null || cmpBadge(data.badge, existing) > 0) {
+            if (existing == null || data.force || cmpBadge(data.badge, existing) > 0) {
                 globalStore.set(curAtom, data.badge);
             }
         },

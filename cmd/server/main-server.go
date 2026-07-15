@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/wavetermdev/waveterm/pkg/agenttracker"
 	"github.com/wavetermdev/waveterm/pkg/aiusechat"
 	"github.com/wavetermdev/waveterm/pkg/authkey"
 	"github.com/wavetermdev/waveterm/pkg/blockcontroller"
@@ -575,11 +576,13 @@ func main() {
 	blocklogger.InitBlockLogger()
 	jobcontroller.InitJobController()
 	blockcontroller.InitBlockController()
+	// badge store must subscribe before the tracker publishes its post-replay badges
 	err = wcore.InitBadgeStore()
 	if err != nil {
 		log.Printf("error initializing badge store: %v\n", err)
 		return
 	}
+	agenttracker.InitAgentTracker()
 	go func() {
 		defer func() {
 			panichandler.PanicHandler("GetSystemSummary", recover())

@@ -80,6 +80,22 @@ declare global {
         conn?: {[key: string]: number};
     };
 
+    // wshrpc.AgentSessionInfo
+    type AgentSessionInfo = {
+        sessionid: string;
+        status: string;
+        cwd?: string;
+        transcriptpath?: string;
+        blockid?: string;
+        tabid?: string;
+        workspaceid?: string;
+        pid?: number;
+        lastprompt?: string;
+        lastnotification?: string;
+        startts?: number;
+        updatedts?: number;
+    };
+
     // wshrpc.AiMessageData
     type AiMessageData = {
         message?: string;
@@ -135,6 +151,7 @@ declare global {
         clearall?: boolean;
         clearbyid?: string;
         badge?: Badge;
+        force?: boolean;
     };
 
     // waveobj.Block
@@ -1590,6 +1607,7 @@ declare global {
         "debug:panictype"?: string;
         "block:view"?: string;
         "block:controller"?: string;
+        "block:subblock"?: boolean;
         "ai:backendtype"?: string;
         "ai:local"?: boolean;
         "wsh:cmd"?: string;
