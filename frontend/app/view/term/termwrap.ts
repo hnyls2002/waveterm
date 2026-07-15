@@ -53,6 +53,11 @@ const MinDataProcessedForCache = 100 * 1024;
 export const SupportsImageInput = true;
 const MaxRepaintTransactionMs = 2000;
 
+// WebLinksAddon's default matcher only linkifies http(s). Broaden to any
+// scheme://... so custom app links (shortcuts://, vscode://, obsidian://, ...)
+// are clickable. Body char classes copied verbatim from the addon's default regex.
+const TermLinkRegex = /[a-z][a-z0-9+.-]*:[/]{2}[^\s"'!*(){}|\\\^<>`]*[^\s"':,.!?{}|\\\^~\[\]`()<>]/i;
+
 // detect webgl support
 function detectWebGLSupport(): boolean {
     try {
@@ -168,6 +173,7 @@ export class TermWrap {
                     }
                 },
                 {
+                    urlRegex: TermLinkRegex,
                     hover: (e, uri) => {
                         this.hoveredLinkUri = uri;
                         this.onLinkHover?.(uri, e.clientX, e.clientY);
