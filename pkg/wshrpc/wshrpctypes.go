@@ -147,6 +147,7 @@ type WshRpcInterface interface {
 
 	WorkspaceListCommand(ctx context.Context) ([]WorkspaceInfoData, error)
 	GetUpdateChannelCommand(ctx context.Context) (string, error)
+	AgentTrackerListCommand(ctx context.Context) ([]AgentSessionInfo, error)
 
 	// terminal
 	VDomCreateContextCommand(ctx context.Context, data vdom.VDomCreateContext) (*waveobj.ORef, error)
@@ -480,6 +481,21 @@ type WaveInfoData struct {
 type WorkspaceInfoData struct {
 	WindowId      string             `json:"windowid"`
 	WorkspaceData *waveobj.Workspace `json:"workspacedata"`
+}
+
+type AgentSessionInfo struct {
+	SessionId        string `json:"sessionid"`
+	Status           string `json:"status"`
+	Cwd              string `json:"cwd,omitempty"`
+	TranscriptPath   string `json:"transcriptpath,omitempty"`
+	BlockId          string `json:"blockid,omitempty"`
+	TabId            string `json:"tabid,omitempty"`
+	WorkspaceId      string `json:"workspaceid,omitempty"`
+	Pid              int    `json:"pid,omitempty"`
+	LastPrompt       string `json:"lastprompt,omitempty"`
+	LastNotification string `json:"lastnotification,omitempty"`
+	StartTs          int64  `json:"startts,omitempty"`
+	UpdatedTs        int64  `json:"updatedts,omitempty"`
 }
 
 type BlocksListRequest struct {

@@ -23,6 +23,12 @@ func ActivityCommand(w *wshutil.WshRpc, data wshrpc.ActivityUpdate, opts *wshrpc
 	return err
 }
 
+// command "agenttrackerlist", wshserver.AgentTrackerListCommand
+func AgentTrackerListCommand(w *wshutil.WshRpc, opts *wshrpc.RpcOpts) ([]wshrpc.AgentSessionInfo, error) {
+	resp, err := sendRpcRequestCallHelper[[]wshrpc.AgentSessionInfo](w, "agenttrackerlist", nil, opts)
+	return resp, err
+}
+
 // command "aisendmessage", wshserver.AiSendMessageCommand
 func AiSendMessageCommand(w *wshutil.WshRpc, data wshrpc.AiMessageData, opts *wshrpc.RpcOpts) error {
 	_, err := sendRpcRequestCallHelper[any](w, "aisendmessage", data, opts)

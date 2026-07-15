@@ -27,4 +27,8 @@ type BadgeEvent struct {
 	ClearAll  bool   `json:"clearall,omitempty"`
 	ClearById string `json:"clearbyid,omitempty"`
 	Badge     *Badge `json:"badge,omitempty"`
+	// Force makes the set unconditional, bypassing the priority/recency compare.
+	// For producers that own a block's badge lifecycle (status indicators that
+	// transition in any direction), not for fire-and-forget notifications.
+	Force bool `json:"force,omitempty"`
 }

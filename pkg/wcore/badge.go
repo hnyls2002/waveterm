@@ -119,7 +119,7 @@ func setBadge(oref waveobj.ORef, data baseds.BadgeEvent) {
 	}
 	incoming := *data.Badge
 	existing, hasExisting := globalBadgeStore.transient[orefStr]
-	if !hasExisting || cmpBadge(incoming, existing) > 0 {
+	if !hasExisting || data.Force || cmpBadge(incoming, existing) > 0 {
 		globalBadgeStore.transient[orefStr] = incoming
 		log.Printf("badge store: badge set: oref=%s badge=%+v\n", orefStr, incoming)
 	}

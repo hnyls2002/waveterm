@@ -45,7 +45,7 @@ describe("VTab badges", () => {
 
         expect(markup).toContain("#429DFF");
         expect(markup).toContain("#f59e0b");
-        expect(markup).toContain("rounded-full");
+        expect(markup).toContain("fa-flag");
     });
 
     it("ignores invalid flag colors", () => {
