@@ -39,6 +39,7 @@
     "term:copyonselect": true,
     "term:trimtrailingwhitespace": true,
     "term:durable": false,
+    "term:disablewebgl": true,
     "waveai:showcloudmodes": true,
     "waveai:defaultmode": "waveai@balanced",
     "preview:defaultsort": "name"
