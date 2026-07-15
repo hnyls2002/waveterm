@@ -72,6 +72,9 @@ const (
 	LivenessGraceMs   = 60 * 1000
 	EndedRetentionMs  = 24 * 60 * 60 * 1000
 	MaxTextSnippetLen = 300
+	// hooks append to events.jsonl forever; bound startup replay cost and disk growth
+	MaxReplayBytes = 2 * 1024 * 1024
+	RotateFileSize = 8 * 1024 * 1024
 )
 
 type hookEvent struct {
@@ -115,6 +118,12 @@ func InitAgentTracker() {
 		return
 	}
 	globalTracker.eventsPath = filepath.Join(eventsDir, EventsFileName)
+	rotateEventsFileIfLarge(globalTracker.eventsPath)
+	// bound the replay: start at the last MaxReplayBytes; the partial first
+	// line fails json parsing and is skipped
+	if finfo, err := os.Stat(globalTracker.eventsPath); err == nil && finfo.Size() > MaxReplayBytes {
+		globalTracker.readOffset = finfo.Size() - MaxReplayBytes
+	}
 	// replay must not publish per-event badges (it would re-fire every historical
 	// transition); instead publish each live session's final status once, so
 	// badges survive a wavesrv restart
@@ -128,6 +137,22 @@ func InitAgentTracker() {
 	log.Printf("agenttracker: initialized, replayed %d events, %d sessions\n", numEvents, len(ListSessions()))
 	go watchLoop(eventsDir)
 	go livenessLoop()
+}
+
+// rotateEventsFileIfLarge renames an oversized log aside (one .old generation
+// kept). Live sessions re-register on their next event (applyEvent upserts),
+// so rotation only costs ended-session history.
+func rotateEventsFileIfLarge(eventsPath string) {
+	finfo, err := os.Stat(eventsPath)
+	if err != nil || finfo.Size() <= RotateFileSize {
+		return
+	}
+	oldPath := eventsPath + ".old"
+	if err := os.Rename(eventsPath, oldPath); err != nil {
+		log.Printf("agenttracker: cannot rotate events file: %v\n", err)
+		return
+	}
+	log.Printf("agenttracker: rotated events file (%d bytes)\n", finfo.Size())
 }
 
 func ListSessions() []wshrpc.AgentSessionInfo {
@@ -318,7 +343,9 @@ func (t *AgentTracker) applyEvent_withlock(event *hookEvent) (bool, *statusTrans
 			visibleChange = true
 		}
 	case HookEvent_Stop:
-		if session.Status != Status_Ended {
+		// don't resurrect a truly-exited claude (Stop can trail SessionEnd),
+		// but let a liveness false-positive heal if the process is alive
+		if session.Status != Status_Ended || pidAlive(session.Pid) {
 			session.Status = Status_Idle
 		}
 	case HookEvent_Notification, HookEvent_PermissionRequest:
@@ -414,32 +441,26 @@ func publishBadgeForTransition(transition statusTransition) {
 	publishBadgeEvent(baseds.BadgeEvent{ORef: oref, Badge: badge, Force: true})
 }
 
-// coalesceTransitions merges same-block transitions within one batch (first
-// oldStatus + last newStatus) so at most one badge event per block is
-// published per batch; unordered delivery of a rapid pair could otherwise
-// apply them reversed.
+// coalesceTransitions keeps only the last transition per block within one
+// batch, so exactly one badge event per block is published per batch
+// (unordered WPS delivery could apply a rapid pair reversed). The last
+// transition carries the block's true end state and its immediate
+// predecessor, so a same-batch prompt+stop still yields the done badge.
 func coalesceTransitions(transitions []statusTransition) []statusTransition {
 	if len(transitions) <= 1 {
 		return transitions
 	}
 	var blockOrder []string
-	byBlock := make(map[string]*statusTransition)
+	byBlock := make(map[string]statusTransition)
 	for _, transition := range transitions {
-		existing := byBlock[transition.blockId]
-		if existing != nil {
-			existing.newStatus = transition.newStatus
-			continue
+		if _, ok := byBlock[transition.blockId]; !ok {
+			blockOrder = append(blockOrder, transition.blockId)
 		}
-		trCopy := transition
-		byBlock[transition.blockId] = &trCopy
-		blockOrder = append(blockOrder, transition.blockId)
+		byBlock[transition.blockId] = transition
 	}
 	rtn := make([]statusTransition, 0, len(blockOrder))
 	for _, blockId := range blockOrder {
-		transition := *byBlock[blockId]
-		if transition.oldStatus != transition.newStatus {
-			rtn = append(rtn, transition)
-		}
+		rtn = append(rtn, byBlock[blockId])
 	}
 	return rtn
 }
@@ -472,6 +493,14 @@ func publishBadgeEvent(data baseds.BadgeEvent) {
 		Scopes: []string{data.ORef},
 		Data:   data,
 	})
+}
+
+func pidAlive(pid int) bool {
+	if pid <= 0 {
+		return false
+	}
+	exists, err := process.PidExists(int32(pid))
+	return err == nil && exists
 }
 
 func truncateText(text string) string {

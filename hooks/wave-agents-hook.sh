@@ -5,9 +5,12 @@
 # Claude Code lifecycle hook for the Wave agents panel.
 #
 # Register this script in ~/.claude/settings.json for the SessionStart,
-# UserPromptSubmit, Stop, Notification, and SessionEnd hook events. It appends
-# one JSON line per event to ~/.claude/wave-agents/events.jsonl, which wavesrv
-# (pkg/agenttracker) tails to drive the Agents panel.
+# UserPromptSubmit, Stop, Notification, PermissionRequest, PostToolUse, and
+# SessionEnd hook events. PermissionRequest drives the attention status and
+# PostToolUse flips attention back to working (and acts as a liveness
+# heartbeat) -- without them the state machine sticks on stale states. The
+# script appends one JSON line per event to ~/.claude/wave-agents/events.jsonl,
+# which wavesrv (pkg/agenttracker) tails.
 #
 # Only sessions running inside Wave terminals are tracked: outside Wave,
 # WAVETERM_BLOCKID is unset and the hook exits immediately.
@@ -31,8 +34,8 @@ jq -c \
         sessionid: .session_id,
         transcriptpath: (.transcript_path // ""),
         cwd: (.cwd // ""),
-        prompt: (.prompt // ""),
-        message: (.message // ""),
+        prompt: ((.prompt // "") | .[0:2000]),
+        message: ((.message // "") | .[0:2000]),
         blockid: $blockid,
         tabid: $tabid,
         workspaceid: $workspaceid,

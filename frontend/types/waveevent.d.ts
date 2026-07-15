@@ -55,7 +55,7 @@ declare global {
         { event: "waveai:modeconfig"; data?: AIModeConfigUpdate; } | 
         { event: "block:jobstatus"; data?: BlockJobStatusData; } | 
         { event: "badge"; data?: BadgeEvent; } | 
-        { event: "agenttracker:update"; data?: any; }
+        { event: "agenttracker:update"; data?: null; }
     );
 
 }
