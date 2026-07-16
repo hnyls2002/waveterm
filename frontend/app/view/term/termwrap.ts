@@ -143,7 +143,18 @@ export class TermWrap {
         this.lastCommandAtom = jotai.atom(null) as jotai.PrimitiveAtom<string | null>;
         this.claudeCodeActiveAtom = jotai.atom(false);
         this.webglEnabledAtom = jotai.atom(false) as jotai.PrimitiveAtom<boolean>;
-        this.terminal = new Terminal(options);
+        this.terminal = new Terminal({
+            ...options,
+            // OSC 8 hyperlinks: xterm's built-in link provider needs a linkHandler
+            // to be interactive. allowNonHttpProtocols lets OSC 8 links carry custom
+            // schemes (shortcuts://, vscode://, ...); activateLink still gates on Cmd/Ctrl.
+            linkHandler: {
+                activate: (e, uri) => this.activateLink(e, uri),
+                hover: (e, uri) => this.hoverLink(e, uri),
+                leave: () => this.leaveLink(),
+                allowNonHttpProtocols: true,
+            },
+        });
         this.fitAddon = new FitAddon();
         this.serializeAddon = new SerializeAddon();
         this.searchAddon = new SearchAddon();
@@ -151,33 +162,10 @@ export class TermWrap {
         this.terminal.loadAddon(this.fitAddon);
         this.terminal.loadAddon(this.serializeAddon);
         this.terminal.loadAddon(
-            new WebLinksAddon(
-                (e, uri) => {
-                    e.preventDefault();
-                    switch (PLATFORM) {
-                        case PlatformMacOS:
-                            if (e.metaKey) {
-                                fireAndForget(() => openLink(uri));
-                            }
-                            break;
-                        default:
-                            if (e.ctrlKey) {
-                                fireAndForget(() => openLink(uri));
-                            }
-                            break;
-                    }
-                },
-                {
-                    hover: (e, uri) => {
-                        this.hoveredLinkUri = uri;
-                        this.onLinkHover?.(uri, e.clientX, e.clientY);
-                    },
-                    leave: () => {
-                        this.hoveredLinkUri = null;
-                        this.onLinkHover?.(null, 0, 0);
-                    },
-                }
-            )
+            new WebLinksAddon((e, uri) => this.activateLink(e, uri), {
+                hover: (e, uri) => this.hoverLink(e, uri),
+                leave: () => this.leaveLink(),
+            })
         );
         this.setTermRenderer(WebGLSupported && waveOptions.useWebGl ? "webgl" : "dom");
         // Register OSC handlers
@@ -322,6 +310,25 @@ export class TermWrap {
                 this.connectElem.removeEventListener("paste", pasteHandler, true);
             },
         });
+    }
+
+    activateLink(e: MouseEvent, uri: string) {
+        e.preventDefault();
+        const modKeyDown = PLATFORM === PlatformMacOS ? e.metaKey : e.ctrlKey;
+        if (!modKeyDown) {
+            return;
+        }
+        fireAndForget(() => openLink(uri));
+    }
+
+    hoverLink(e: MouseEvent, uri: string) {
+        this.hoveredLinkUri = uri;
+        this.onLinkHover?.(uri, e.clientX, e.clientY);
+    }
+
+    leaveLink() {
+        this.hoveredLinkUri = null;
+        this.onLinkHover?.(null, 0, 0);
     }
 
     getZoneId(): string {
