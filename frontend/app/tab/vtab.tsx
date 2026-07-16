@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { refocusNode } from "@/app/store/global";
-import { validateCssColor } from "@/util/color-validator";
 import { cn } from "@/util/util";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { TabBadges } from "./tabbadges";
+import { sanitizeFlagColor, TabBadges } from "./tabbadges";
 
 const RenameFocusDelayMs = 50;
 
@@ -58,16 +57,7 @@ export function VTab({
     const editableTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const badges = tab.badges ?? (tab.badge ? [tab.badge] : null);
 
-    const rawFlagColor = tab.flagColor;
-    let flagColor: string | null = null;
-    if (rawFlagColor) {
-        try {
-            validateCssColor(rawFlagColor);
-            flagColor = rawFlagColor;
-        } catch {
-            flagColor = null;
-        }
-    }
+    const flagColor = sanitizeFlagColor(tab.flagColor);
 
     useEffect(() => {
         setOriginalName(tab.name);

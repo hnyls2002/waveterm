@@ -7,13 +7,12 @@ import { getTabModelByTabId } from "@/app/store/tab-model";
 import { TabRpcClient } from "@/app/store/wshrpcutil";
 import { WaveEnv, WaveEnvSubset, useWaveEnv } from "@/app/waveenv/waveenv";
 import { Button } from "@/element/button";
-import { validateCssColor } from "@/util/color-validator";
 import { fireAndForget } from "@/util/util";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { makeORef } from "../store/wos";
-import { TabBadges } from "./tabbadges";
+import { getTabBadgeExtraWidth, sanitizeFlagColor, TabBadges } from "./tabbadges";
 import "./tab.scss";
 import { buildTabContextMenu } from "./tabcontextmenu";
 
@@ -72,6 +71,13 @@ const TabV = forwardRef<HTMLDivElement, TabVProps>((props, ref) => {
     const MaxTabNameLength = 14;
     const truncateTabName = (name: string) => [...(name ?? "")].slice(0, MaxTabNameLength).join("");
     const displayName = truncateTabName(tabName);
+    // shift the centered title right by the badge-row width so badges never
+    // overlap it; the tab bar widens the tab by the same amount
+    const badgeExtraWidth = getTabBadgeExtraWidth(badges, flagColor);
+    const nameStyle: React.CSSProperties =
+        badgeExtraWidth > 0
+            ? { left: `calc(50% + ${badgeExtraWidth / 2}px)`, width: `calc(100% - 10px - ${badgeExtraWidth}px)` }
+            : undefined;
     const [originalName, setOriginalName] = useState(displayName);
     const [isEditable, setIsEditable] = useState(false);
 
@@ -196,6 +202,7 @@ const TabV = forwardRef<HTMLDivElement, TabVProps>((props, ref) => {
                 <div
                     ref={editableRef}
                     className={clsx("name", { focused: isEditable })}
+                    style={nameStyle}
                     contentEditable={isEditable}
                     onDoubleClick={handleRenameTab}
                     onBlur={handleBlur}
@@ -239,16 +246,7 @@ const TabInner = forwardRef<HTMLDivElement, TabProps>((props, ref) => {
     const [tabData, _] = env.wos.useWaveObjectValue<Tab>(makeORef("tab", id));
     const badges = useAtomValue(getTabBadgeAtom(id, env));
 
-    const rawFlagColor = tabData?.meta?.["tab:flagcolor"];
-    let flagColor: string | null = null;
-    if (rawFlagColor) {
-        try {
-            validateCssColor(rawFlagColor);
-            flagColor = rawFlagColor;
-        } catch {
-            flagColor = null;
-        }
-    }
+    const flagColor = sanitizeFlagColor(tabData?.meta?.["tab:flagcolor"]);
 
     const loadedRef = useRef(false);
     const renameRef = useRef<(() => void) | null>(null);
