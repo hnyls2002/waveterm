@@ -17,6 +17,7 @@ import (
 
 	"github.com/wavetermdev/waveterm/pkg/panichandler"
 	"github.com/wavetermdev/waveterm/pkg/userinput"
+	"github.com/wavetermdev/waveterm/pkg/util/utilfn"
 	"github.com/wavetermdev/waveterm/pkg/waveobj"
 	"github.com/wavetermdev/waveterm/pkg/wconfig"
 )
@@ -117,18 +118,6 @@ func hookInstallNeeded(homeDir string) bool {
 	return len(missingHookEvents(homeDir)) > 0
 }
 
-// encodeJsonNoEscape marshals without HTML escaping; plain json.Marshal would
-// rewrite &, <, > inside the user's existing hook commands as \u0026 etc.
-func encodeJsonNoEscape(v any) ([]byte, error) {
-	var buf bytes.Buffer
-	enc := json.NewEncoder(&buf)
-	enc.SetEscapeHTML(false)
-	if err := enc.Encode(v); err != nil {
-		return nil, err
-	}
-	return bytes.TrimRight(buf.Bytes(), "\n"), nil
-}
-
 func parseObjMembers(data []byte) ([]jsonObjMember, error) {
 	dec := json.NewDecoder(bytes.NewReader(data))
 	tok, err := dec.Token()
@@ -160,23 +149,32 @@ func parseObjMembers(data []byte) ([]jsonObjMember, error) {
 	return members, nil
 }
 
-func encodeObjMembers(members []jsonObjMember) (json.RawMessage, error) {
+func joinRaw(openDelim, closeDelim byte, elems []json.RawMessage) json.RawMessage {
 	var buf bytes.Buffer
-	buf.WriteByte('{')
-	for idx, member := range members {
+	buf.WriteByte(openDelim)
+	for idx, elem := range elems {
 		if idx > 0 {
 			buf.WriteByte(',')
 		}
-		keyBytes, err := encodeJsonNoEscape(member.Key)
+		buf.Write(elem)
+	}
+	buf.WriteByte(closeDelim)
+	return buf.Bytes()
+}
+
+// encoding goes through utilfn.MarshalIndentNoHTMLString (SetEscapeHTML false):
+// plain json.Marshal would rewrite &, <, > inside the user's existing hook
+// commands as \u0026 etc.
+func encodeObjMembers(members []jsonObjMember) (json.RawMessage, error) {
+	elems := make([]json.RawMessage, 0, len(members))
+	for _, member := range members {
+		key, err := utilfn.MarshalIndentNoHTMLString(member.Key, "", "")
 		if err != nil {
 			return nil, err
 		}
-		buf.Write(keyBytes)
-		buf.WriteByte(':')
-		buf.Write(member.Val)
+		elems = append(elems, append(json.RawMessage(key+":"), member.Val...))
 	}
-	buf.WriteByte('}')
-	return buf.Bytes(), nil
+	return joinRaw('{', '}', elems), nil
 }
 
 func findObjMember(members []jsonObjMember, key string) int {
@@ -188,70 +186,61 @@ func findObjMember(members []jsonObjMember, key string) int {
 	return -1
 }
 
+func setObjMember(members []jsonObjMember, key string, val json.RawMessage) []jsonObjMember {
+	if idx := findObjMember(members, key); idx >= 0 {
+		members[idx].Val = val
+		return members
+	}
+	return append(members, jsonObjMember{Key: key, Val: val})
+}
+
 func appendArrayElem(arrData json.RawMessage, elem json.RawMessage) (json.RawMessage, error) {
 	var elems []json.RawMessage
 	if err := json.Unmarshal(arrData, &elems); err != nil {
 		return nil, err
 	}
-	elems = append(elems, elem)
-	var buf bytes.Buffer
-	buf.WriteByte('[')
-	for idx, e := range elems {
-		if idx > 0 {
-			buf.WriteByte(',')
-		}
-		buf.Write(e)
-	}
-	buf.WriteByte(']')
-	return buf.Bytes(), nil
+	return joinRaw('[', ']', append(elems, elem)), nil
 }
 
 // mergeHookRegistrations appends a wave hook group to each of the given events
 // in the settings document, touching nothing else (member order, other hooks,
 // and unrelated sections all come through byte-identical modulo re-indent).
 func mergeHookRegistrations(settingsData []byte, hookCmd string, events []string) ([]byte, error) {
-	groupRaw, err := encodeJsonNoEscape(claudeHookGroup{
+	group, err := utilfn.MarshalIndentNoHTMLString(claudeHookGroup{
 		Hooks: []claudeHookCommand{{Type: "command", Command: hookCmd}},
-	})
+	}, "", "")
 	if err != nil {
 		return nil, err
 	}
+	groupRaw := json.RawMessage(group)
 	top, err := parseObjMembers(settingsData)
 	if err != nil {
 		return nil, fmt.Errorf("parsing claude settings: %w", err)
 	}
-	hooksIdx := findObjMember(top, "hooks")
 	hooksVal := json.RawMessage("{}")
-	if hooksIdx >= 0 {
-		hooksVal = top[hooksIdx].Val
+	if idx := findObjMember(top, "hooks"); idx >= 0 {
+		hooksVal = top[idx].Val
 	}
 	hooksMembers, err := parseObjMembers(hooksVal)
 	if err != nil {
 		return nil, fmt.Errorf("parsing hooks section: %w", err)
 	}
 	for _, event := range events {
-		eventIdx := findObjMember(hooksMembers, event)
-		if eventIdx >= 0 {
-			newVal, err := appendArrayElem(hooksMembers[eventIdx].Val, groupRaw)
-			if err != nil {
-				return nil, fmt.Errorf("appending to hooks.%s: %w", event, err)
-			}
-			hooksMembers[eventIdx].Val = newVal
-		} else {
-			arrVal := append(append(json.RawMessage("["), groupRaw...), ']')
-			hooksMembers = append(hooksMembers, jsonObjMember{Key: event, Val: arrVal})
+		arrData := json.RawMessage("[]")
+		if idx := findObjMember(hooksMembers, event); idx >= 0 {
+			arrData = hooksMembers[idx].Val
 		}
+		newVal, err := appendArrayElem(arrData, groupRaw)
+		if err != nil {
+			return nil, fmt.Errorf("appending to hooks.%s: %w", event, err)
+		}
+		hooksMembers = setObjMember(hooksMembers, event, newVal)
 	}
 	newHooksVal, err := encodeObjMembers(hooksMembers)
 	if err != nil {
 		return nil, err
 	}
-	if hooksIdx >= 0 {
-		top[hooksIdx].Val = newHooksVal
-	} else {
-		top = append(top, jsonObjMember{Key: "hooks", Val: newHooksVal})
-	}
-	merged, err := encodeObjMembers(top)
+	merged, err := encodeObjMembers(setObjMember(top, "hooks", newHooksVal))
 	if err != nil {
 		return nil, err
 	}

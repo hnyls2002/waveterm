@@ -93,7 +93,6 @@ type hookEvent struct {
 	Pid            int    `json:"pid,omitempty"`
 	Prompt         string `json:"prompt,omitempty"`
 	Message        string `json:"message,omitempty"`
-	Error          string `json:"error,omitempty"`
 }
 
 type statusTransition struct {
@@ -354,11 +353,17 @@ func (t *AgentTracker) applyEvent_withlock(event *hookEvent) (bool, *statusTrans
 		if session.Status != Status_Ended || pidAlive(session.Pid) {
 			session.Status = Status_Idle
 		}
-	case HookEvent_Notification, HookEvent_PermissionRequest:
+	case HookEvent_Notification, HookEvent_PermissionRequest, HookEvent_StopFailure:
 		if event.Event == HookEvent_Notification && event.Message == IdleNotificationMessage {
 			break
 		}
-		session.Status = Status_Attention
+		if event.Event == HookEvent_StopFailure {
+			// the turn died on an API error; Stop never fires on this path, so
+			// without this the session would spin as working forever
+			session.Status = Status_Error
+		} else {
+			session.Status = Status_Attention
+		}
 		if event.Message != "" && event.Message != session.LastNotification {
 			session.LastNotification = truncateText(event.Message)
 			visibleChange = true
@@ -367,14 +372,6 @@ func (t *AgentTracker) applyEvent_withlock(event *hookEvent) (bool, *statusTrans
 		// a tool completing means a pending permission request was approved
 		if session.Status == Status_Attention {
 			session.Status = Status_Working
-		}
-	case HookEvent_StopFailure:
-		// the turn died on an API error; Stop never fires on this path, so
-		// without this the session would spin as working forever
-		session.Status = Status_Error
-		if event.Error != "" && event.Error != session.LastNotification {
-			session.LastNotification = truncateText(event.Error)
-			visibleChange = true
 		}
 	case HookEvent_SessionEnd:
 		session.Status = Status_Ended
@@ -479,6 +476,12 @@ func coalesceTransitions(transitions []statusTransition) []statusTransition {
 	return rtn
 }
 
+// isActiveStatus reports whether the session is mid-turn; a transition from an
+// active status to idle means the turn finished and earns the done badge
+func isActiveStatus(status string) bool {
+	return status == Status_Working || status == Status_Attention || status == Status_Error
+}
+
 func badgeForTransition(transition statusTransition) *baseds.Badge {
 	badgeId, err := uuid.NewV7()
 	if err != nil {
@@ -494,7 +497,7 @@ func badgeForTransition(transition statusTransition) *baseds.Badge {
 		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "bell", Color: BadgeColor_Attention, Priority: BadgePriority_Attention, PidLinked: true}
 	case transition.newStatus == Status_Error:
 		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "triangle-exclamation", Color: BadgeColor_Error, Priority: BadgePriority_Error, PidLinked: true}
-	case transition.newStatus == Status_Idle && (transition.oldStatus == Status_Working || transition.oldStatus == Status_Attention || transition.oldStatus == Status_Error):
+	case transition.newStatus == Status_Idle && isActiveStatus(transition.oldStatus):
 		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "check", Color: BadgeColor_Done, Priority: BadgePriority_Done, PidLinked: true}
 	case transition.newStatus == Status_Idle:
 		// fresh session sitting at the prompt (or revived by resume)

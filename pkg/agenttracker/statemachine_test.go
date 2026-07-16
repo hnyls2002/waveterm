@@ -24,7 +24,7 @@ func TestStopFailureTransitions(t *testing.T) {
 		t.Fatalf("after prompt: status = %s, want %s", got, Status_Working)
 	}
 
-	transition := applyTestEvent(t, tracker, &hookEvent{Event: HookEvent_StopFailure, SessionId: sessionId, Error: "API Error: 529 Overloaded"})
+	transition := applyTestEvent(t, tracker, &hookEvent{Event: HookEvent_StopFailure, SessionId: sessionId, Message: "API Error: 529 Overloaded"})
 	session := tracker.sessions[sessionId]
 	if session.Status != Status_Error {
 		t.Fatalf("after StopFailure: status = %s, want %s", session.Status, Status_Error)
@@ -53,7 +53,7 @@ func TestStopAfterErrorShowsDoneBadge(t *testing.T) {
 	tracker := &AgentTracker{sessions: make(map[string]*wshrpc.AgentSessionInfo)}
 	sessionId := "sess-2"
 	applyTestEvent(t, tracker, &hookEvent{Event: HookEvent_SessionStart, SessionId: sessionId, BlockId: "blk-2", Pid: 0})
-	applyTestEvent(t, tracker, &hookEvent{Event: HookEvent_StopFailure, SessionId: sessionId, Error: "unknown"})
+	applyTestEvent(t, tracker, &hookEvent{Event: HookEvent_StopFailure, SessionId: sessionId, Message: "unknown"})
 	transition := applyTestEvent(t, tracker, &hookEvent{Event: HookEvent_Stop, SessionId: sessionId})
 	if transition == nil {
 		t.Fatal("Stop after error produced no transition")

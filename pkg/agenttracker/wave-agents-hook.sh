@@ -38,8 +38,8 @@ jq -c \
         transcriptpath: (.transcript_path // ""),
         cwd: (.cwd // ""),
         prompt: ((.prompt // "") | .[0:2000]),
-        message: ((.message // "") | .[0:2000]),
-        error: ((((.error // "") | tostring)
+        message: ((((.message // "") | tostring)
+            + ((.error // "") | tostring)
             + (if .error_details == null then "" else " - " + (.error_details | tostring) end))
             | .[0:2000]),
         blockid: $blockid,

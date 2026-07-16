@@ -62,6 +62,16 @@ func writeTestSettings(t *testing.T, homeDir string, content string) string {
 	return settingsPath
 }
 
+func assertAllEventsRegistered(t *testing.T, data []byte, context string) {
+	t.Helper()
+	registered := registeredHookEventsFromData(data)
+	for _, event := range trackedHookEvents {
+		if !registered[event] {
+			t.Errorf("event %s not registered %s", event, context)
+		}
+	}
+}
+
 func topLevelKeys(t *testing.T, data []byte) []string {
 	t.Helper()
 	members, err := parseObjMembers(data)
@@ -85,12 +95,7 @@ func TestInstallMergesAndPreserves(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	registered := registeredHookEventsFromData(data)
-	for _, event := range trackedHookEvents {
-		if !registered[event] {
-			t.Errorf("event %s not registered after install", event)
-		}
-	}
+	assertAllEventsRegistered(t, data, "after install")
 	keys := topLevelKeys(t, data)
 	wantKeys := []string{"env", "permissions", "hooks", "theme"}
 	for idx, want := range wantKeys {
@@ -157,12 +162,7 @@ func TestInstallCreatesSettings(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	registered := registeredHookEventsFromData(data)
-	for _, event := range trackedHookEvents {
-		if !registered[event] {
-			t.Errorf("event %s not registered in fresh settings.json", event)
-		}
-	}
+	assertAllEventsRegistered(t, data, "in fresh settings.json")
 }
 
 func TestInstallAppendsOnlyMissing(t *testing.T) {
@@ -225,12 +225,7 @@ func TestInstallPreservesSymlink(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	registered := registeredHookEventsFromData(targetData)
-	for _, event := range trackedHookEvents {
-		if !registered[event] {
-			t.Errorf("event %s not registered in symlink target", event)
-		}
-	}
+	assertAllEventsRegistered(t, targetData, "in symlink target")
 }
 
 func TestInstallRespectsLocalSettings(t *testing.T) {
