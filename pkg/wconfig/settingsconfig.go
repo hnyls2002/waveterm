@@ -73,6 +73,9 @@ type SettingsType struct {
 
 	FeatureWaveAppBuilder bool `json:"feature:waveappbuilder,omitempty"`
 
+	AgentsClear                bool `json:"agents:*,omitempty"`
+	AgentsHookInstallDismissed bool `json:"agents:hookinstalldismissed,omitempty"`
+
 	AiClear         bool    `json:"ai:*,omitempty"`
 	AiPreset        string  `json:"ai:preset,omitempty"`
 	AiApiType       string  `json:"ai:apitype,omitempty"`

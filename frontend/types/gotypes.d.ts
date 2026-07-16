@@ -1406,6 +1406,8 @@ declare global {
         "app:tabbar"?: string;
         "app:theme"?: string;
         "feature:waveappbuilder"?: boolean;
+        "agents:*"?: boolean;
+        "agents:hookinstalldismissed"?: boolean;
         "ai:*"?: boolean;
         "ai:preset"?: string;
         "ai:apitype"?: string;
