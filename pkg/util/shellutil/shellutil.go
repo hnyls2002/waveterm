@@ -222,6 +222,9 @@ func WaveshellLocalEnvVars(termType string) map[string]string {
 	}
 	// these are not necessary since they should be set with the swap token, but no harm in setting them here
 	rtn["TERM_PROGRAM"] = "waveterm"
+	// Wave renders OSC 8 hyperlinks (terminal linkHandler); advertise support so
+	// hyperlink-aware CLIs emit them even though their allowlists don't know "waveterm".
+	rtn["FORCE_HYPERLINK"] = "1"
 	if os.Getenv("COLORTERM") == "" {
 		rtn["COLORTERM"] = "truecolor"
 	}

@@ -463,6 +463,9 @@ func makeSwapToken(ctx context.Context, logCtx context.Context, blockId string, 
 		Exp:   time.Now().Add(5 * time.Minute),
 	}
 	token.Env["TERM_PROGRAM"] = "waveterm"
+	// Wave renders OSC 8 hyperlinks; advertise support to hyperlink-aware CLIs that
+	// don't recognize TERM_PROGRAM=waveterm (so they emit OSC 8 instead of inline URLs).
+	token.Env["FORCE_HYPERLINK"] = "1"
 	token.Env["WAVETERM_BLOCKID"] = blockId
 	token.Env["WAVETERM_VERSION"] = wavebase.WaveVersion
 	token.Env["WAVETERM"] = "1"
