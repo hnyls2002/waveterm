@@ -60,6 +60,12 @@
         "feature:waveappbuilder": {
           "type": "boolean"
         },
+        "agents:*": {
+          "type": "boolean"
+        },
+        "agents:hookinstalldismissed": {
+          "type": "boolean"
+        },
         "ai:*": {
           "type": "boolean"
         },

@@ -31,17 +31,20 @@ const (
 	Status_Working   = "working"
 	Status_Idle      = "idle"
 	Status_Attention = "attention"
+	Status_Error     = "error"
 	Status_Ended     = "ended"
 )
 
 const (
+	BadgeColor_Error     = "#ef4444"
 	BadgeColor_Attention = "#f59e0b"
 	BadgeColor_Done      = "#22c55e"
 	BadgeColor_Working   = "#3b82f6"
 	BadgeColor_Idle      = "#6b7280"
 	// priorities only order badges across blocks in the tab aggregation
-	// (act-now beats result-ready beats in-progress beats at-prompt); within
-	// a block the tracker replaces unconditionally via Force
+	// (broken beats act-now beats result-ready beats in-progress beats
+	// at-prompt); within a block the tracker replaces unconditionally via Force
+	BadgePriority_Error     = 4
 	BadgePriority_Attention = 3
 	BadgePriority_Done      = 2
 	BadgePriority_Working   = 1
@@ -56,6 +59,7 @@ const (
 	HookEvent_PermissionRequest = "PermissionRequest"
 	HookEvent_PostToolUse       = "PostToolUse"
 	HookEvent_SessionEnd        = "SessionEnd"
+	HookEvent_StopFailure       = "StopFailure"
 )
 
 // Claude Code fires this notification 60s after every Stop while sitting at
@@ -89,6 +93,7 @@ type hookEvent struct {
 	Pid            int    `json:"pid,omitempty"`
 	Prompt         string `json:"prompt,omitempty"`
 	Message        string `json:"message,omitempty"`
+	Error          string `json:"error,omitempty"`
 }
 
 type statusTransition struct {
@@ -137,6 +142,7 @@ func InitAgentTracker() {
 	log.Printf("agenttracker: initialized, replayed %d events, %d sessions\n", numEvents, len(ListSessions()))
 	go watchLoop(eventsDir)
 	go livenessLoop()
+	go hookInstallPromptIfNeeded()
 }
 
 // rotateEventsFileIfLarge renames an oversized log aside (one .old generation
@@ -362,6 +368,14 @@ func (t *AgentTracker) applyEvent_withlock(event *hookEvent) (bool, *statusTrans
 		if session.Status == Status_Attention {
 			session.Status = Status_Working
 		}
+	case HookEvent_StopFailure:
+		// the turn died on an API error; Stop never fires on this path, so
+		// without this the session would spin as working forever
+		session.Status = Status_Error
+		if event.Error != "" && event.Error != session.LastNotification {
+			session.LastNotification = truncateText(event.Error)
+			visibleChange = true
+		}
 	case HookEvent_SessionEnd:
 		session.Status = Status_Ended
 	}
@@ -478,7 +492,9 @@ func badgeForTransition(transition statusTransition) *baseds.Badge {
 		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "spinner+spin", Color: BadgeColor_Working, Priority: BadgePriority_Working, PidLinked: true}
 	case transition.newStatus == Status_Attention:
 		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "bell", Color: BadgeColor_Attention, Priority: BadgePriority_Attention, PidLinked: true}
-	case transition.newStatus == Status_Idle && (transition.oldStatus == Status_Working || transition.oldStatus == Status_Attention):
+	case transition.newStatus == Status_Error:
+		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "triangle-exclamation", Color: BadgeColor_Error, Priority: BadgePriority_Error, PidLinked: true}
+	case transition.newStatus == Status_Idle && (transition.oldStatus == Status_Working || transition.oldStatus == Status_Attention || transition.oldStatus == Status_Error):
 		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "check", Color: BadgeColor_Done, Priority: BadgePriority_Done, PidLinked: true}
 	case transition.newStatus == Status_Idle:
 		// fresh session sitting at the prompt (or revived by resume)
