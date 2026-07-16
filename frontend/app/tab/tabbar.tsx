@@ -166,8 +166,12 @@ const TabBar = memo(({ workspace, noTabs }: TabBarProps) => {
     }, [tabBadgeExtrasStr, tabIds]);
     const tabExtraWidthsRef = useRef(tabExtraWidths);
     tabExtraWidthsRef.current = tabExtraWidths;
+    // snapshot taken at drag start so all drag geometry (positions, midpoints,
+    // bounds) stays consistent even if badges change mid-drag
+    const dragTabExtrasRef = useRef<Map<string, number>>(null);
 
-    const getTabWidthById = (tabId: string) => tabWidthRef.current + (tabExtraWidthsRef.current.get(tabId) ?? 0);
+    const getTabWidthById = (tabId: string) =>
+        tabWidthRef.current + ((dragTabExtrasRef.current ?? tabExtraWidthsRef.current).get(tabId) ?? 0);
 
     const computeTabPositions = (ids: string[]) => {
         let cumulative = 0;
@@ -311,18 +315,28 @@ const TabBar = memo(({ workspace, noTabs }: TabBarProps) => {
         }
     }, [reinitVersion]);
 
-    // relayout when badge rows appear/disappear (tab widths depend on them)
+    // relayout when badge rows appear/disappear (tab widths depend on them);
+    // deferred while a drag is live -- rewriting transforms mid-drag would
+    // yank the dragged tab out of the user's hand
     const prevBadgeExtrasRef = useRef(tabBadgeExtrasStr);
+    const pendingBadgeRelayoutRef = useRef(false);
     useEffect(() => {
-        if (prevBadgeExtrasRef.current === tabBadgeExtrasStr) {
+        const changed = prevBadgeExtrasRef.current !== tabBadgeExtrasStr;
+        prevBadgeExtrasRef.current = tabBadgeExtrasStr;
+        if (!changed && !pendingBadgeRelayoutRef.current) {
             return;
         }
-        prevBadgeExtrasRef.current = tabBadgeExtrasStr;
-        if (prevAllLoadedRef.current) {
-            setSizeAndPosition(true);
-            saveTabsPositionDebounced();
+        if (!prevAllLoadedRef.current) {
+            return;
         }
-    }, [tabBadgeExtrasStr]);
+        if (draggingTab != null) {
+            pendingBadgeRelayoutRef.current = true;
+            return;
+        }
+        pendingBadgeRelayoutRef.current = false;
+        setSizeAndPosition(true);
+        saveTabsPositionDebounced();
+    }, [tabBadgeExtrasStr, draggingTab]);
 
     // update layout on resize
     useEffect(() => {
@@ -541,6 +555,7 @@ const TabBar = memo(({ workspace, noTabs }: TabBarProps) => {
         document.removeEventListener("mouseup", handleMouseUp);
         document.removeEventListener("mousemove", handleMouseMove);
         draggingRemovedRef.current = false;
+        dragTabExtrasRef.current = null;
     };
 
     const handleDragStart = useCallback(
@@ -552,6 +567,7 @@ const TabBar = memo(({ workspace, noTabs }: TabBarProps) => {
 
             console.log("handleDragStart", tabId, tabIndex, tabStartX);
             if (ref.current) {
+                dragTabExtrasRef.current = tabExtraWidthsRef.current;
                 draggingTabDataRef.current = {
                     tabId: ref.current.dataset.tabId,
                     ref,
