@@ -32,7 +32,10 @@ import { delay, ensureBoundsAreVisible, waveKeyToElectronKey } from "./emain-uti
 import { ElectronWshClient } from "./emain-wsh";
 import { updater } from "./updater";
 
-const DevInitTimeoutMs = 5000;
+// vite's on-demand transform makes a cold dev tabview init take 6-17s; a
+// timeout here rejects the pending tab activation in processActionQueue, which
+// is never retried, leaving the window black until a manual tab switch
+const DevInitTimeoutMs = 30000;
 
 export type WindowOpts = {
     unamePlatform: NodeJS.Platform;
