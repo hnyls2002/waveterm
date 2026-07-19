@@ -50,22 +50,47 @@ function clearBadgeInternal(oref: string, env?: BadgeEnv) {
     publishBadgeEvent(eventData, env);
 }
 
-function clearBadgesForBlockOnFocus(blockId: string, env?: BadgeEnv) {
-    const oref = WOS.makeORef("block", blockId);
+// Icon base names are [a-z0-9-]+ so "+fade" can only appear as a modifier.
+function stripFadeModifier(icon: string): string {
+    return icon?.replace(/\+fade/g, "");
+}
+
+function markBadgeSeenInternal(oref: string, badgeId: string, env?: BadgeEnv) {
+    const eventData: WaveEvent = {
+        event: "badge",
+        scopes: [oref],
+        data: {
+            oref: oref,
+            markseenbyid: badgeId,
+        } as BadgeEvent,
+    };
+    publishBadgeEvent(eventData, env);
+}
+
+// Focus acks the badge: transient badges clear; pidlinked status badges are
+// owned by their producer, so focus only marks them seen (stops the "+fade"
+// unseen blink) instead of clearing them.
+function ackBadgeOnFocus(oref: string, env?: BadgeEnv) {
     const badgeAtom = BadgeMap.get(oref);
     const badge = badgeAtom != null ? globalStore.get(badgeAtom) : null;
-    if (badge != null && !badge.pidlinked) {
+    if (badge == null) {
+        return;
+    }
+    if (!badge.pidlinked) {
         clearBadgeInternal(oref, env);
+        return;
+    }
+    if (badge.icon?.includes("+fade")) {
+        markBadgeSeenInternal(oref, badge.badgeid, env);
     }
 }
 
+function clearBadgesForBlockOnFocus(blockId: string, env?: BadgeEnv) {
+    ackBadgeOnFocus(WOS.makeORef("block", blockId), env);
+}
+
 function clearBadgesForTabOnFocus(tabId: string, env?: BadgeEnv) {
-    const oref = WOS.makeORef("tab", tabId);
-    const badgeAtom = BadgeMap.get(oref);
-    const badge = badgeAtom != null ? globalStore.get(badgeAtom) : null;
-    if (badge != null && !badge.pidlinked) {
-        clearBadgeInternal(oref, env);
-    }
+    ackBadgeOnFocus(WOS.makeORef("tab", tabId), env);
 }
 
 function clearAllBadges(env?: BadgeEnv) {
@@ -209,6 +234,13 @@ function setupBadgesSubscription() {
                 const existing = globalStore.get(curAtom);
                 if (existing?.badgeid === data.clearbyid) {
                     globalStore.set(curAtom, null);
+                }
+                return;
+            }
+            if (data.markseenbyid) {
+                const existing = globalStore.get(curAtom);
+                if (existing?.badgeid === data.markseenbyid && existing.icon?.includes("+fade")) {
+                    globalStore.set(curAtom, { ...existing, icon: stripFadeModifier(existing.icon) });
                 }
                 return;
             }

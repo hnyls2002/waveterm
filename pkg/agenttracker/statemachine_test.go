@@ -63,3 +63,25 @@ func TestStopAfterErrorShowsDoneBadge(t *testing.T) {
 		t.Errorf("Stop after error should show the done badge, got %+v", badge)
 	}
 }
+
+func TestTerminalBadgesCarryUnseenFade(t *testing.T) {
+	testCases := []struct {
+		transition statusTransition
+		wantIcon   string
+	}{
+		{statusTransition{blockId: "blk", oldStatus: Status_Idle, newStatus: Status_Working}, "spinner+spin"},
+		{statusTransition{blockId: "blk", oldStatus: Status_Working, newStatus: Status_Attention}, "bell+fade"},
+		{statusTransition{blockId: "blk", oldStatus: Status_Working, newStatus: Status_Error}, "triangle-exclamation+fade"},
+		{statusTransition{blockId: "blk", oldStatus: Status_Working, newStatus: Status_Idle}, "check+fade"},
+		{statusTransition{blockId: "blk", oldStatus: "", newStatus: Status_Idle}, "robot"},
+	}
+	for _, tc := range testCases {
+		badge := badgeForTransition(tc.transition)
+		if badge == nil {
+			t.Fatalf("transition %s->%s produced no badge", tc.transition.oldStatus, tc.transition.newStatus)
+		}
+		if badge.Icon != tc.wantIcon {
+			t.Errorf("transition %s->%s: icon = %q, want %q", tc.transition.oldStatus, tc.transition.newStatus, badge.Icon, tc.wantIcon)
+		}
+	}
+}

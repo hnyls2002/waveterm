@@ -5,6 +5,7 @@ package wcore
 
 import (
 	"log"
+	"strings"
 	"sync"
 
 	"github.com/wavetermdev/waveterm/pkg/baseds"
@@ -72,6 +73,12 @@ func handleBadgeEvent(event *wps.WaveEvent) {
 	setBadge(oref, data)
 }
 
+// stripFadeModifier removes the "+fade" unseen animation from an icon spec.
+// Icon base names are [a-z0-9-]+ so "+fade" can only appear as a modifier.
+func stripFadeModifier(icon string) string {
+	return strings.ReplaceAll(icon, "+fade", "")
+}
+
 // cmpBadge compares two badges by priority then by badgeid (both descending).
 // Returns 1 if a > b, -1 if a < b, 0 if equal.
 func cmpBadge(a, b baseds.Badge) int {
@@ -107,6 +114,16 @@ func setBadge(oref waveobj.ORef, data baseds.BadgeEvent) {
 		}
 		delete(globalBadgeStore.transient, orefStr)
 		log.Printf("badge store: badge cleared by id: oref=%s id=%s\n", orefStr, data.ClearById)
+		return
+	}
+	if data.MarkSeenById != "" {
+		existing, ok := globalBadgeStore.transient[orefStr]
+		if !ok || existing.BadgeId != data.MarkSeenById {
+			return
+		}
+		existing.Icon = stripFadeModifier(existing.Icon)
+		globalBadgeStore.transient[orefStr] = existing
+		log.Printf("badge store: badge marked seen: oref=%s id=%s\n", orefStr, data.MarkSeenById)
 		return
 	}
 	if data.Clear {

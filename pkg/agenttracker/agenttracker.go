@@ -489,16 +489,19 @@ func badgeForTransition(transition statusTransition) *baseds.Badge {
 	}
 	// PidLinked exempts these badges from the focus auto-clear: they are status
 	// indicators owned by the tracker, which clears them on the next transition
-	// (new prompt, session end, liveness reconcile), not on being seen.
+	// (new prompt, session end, liveness reconcile), not on being seen. The
+	// "+fade" modifier on the terminal states (done/attention/error) encodes
+	// unseen: focusing the block marks the badge seen (MarkSeenById), which
+	// strips the fade so the badge stops blinking but stays visible.
 	switch {
 	case transition.newStatus == Status_Working:
 		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "spinner+spin", Color: BadgeColor_Working, Priority: BadgePriority_Working, PidLinked: true}
 	case transition.newStatus == Status_Attention:
-		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "bell", Color: BadgeColor_Attention, Priority: BadgePriority_Attention, PidLinked: true}
+		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "bell+fade", Color: BadgeColor_Attention, Priority: BadgePriority_Attention, PidLinked: true}
 	case transition.newStatus == Status_Error:
-		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "triangle-exclamation", Color: BadgeColor_Error, Priority: BadgePriority_Error, PidLinked: true}
+		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "triangle-exclamation+fade", Color: BadgeColor_Error, Priority: BadgePriority_Error, PidLinked: true}
 	case transition.newStatus == Status_Idle && isActiveStatus(transition.oldStatus):
-		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "check", Color: BadgeColor_Done, Priority: BadgePriority_Done, PidLinked: true}
+		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "check+fade", Color: BadgeColor_Done, Priority: BadgePriority_Done, PidLinked: true}
 	case transition.newStatus == Status_Idle:
 		// fresh session sitting at the prompt (or revived by resume)
 		return &baseds.Badge{BadgeId: badgeId.String(), Icon: "robot", Color: BadgeColor_Idle, Priority: BadgePriority_Idle, PidLinked: true}
