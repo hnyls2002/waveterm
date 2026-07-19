@@ -150,6 +150,7 @@ declare global {
         clear?: boolean;
         clearall?: boolean;
         clearbyid?: string;
+        markseenbyid?: string;
         badge?: Badge;
         force?: boolean;
     };
